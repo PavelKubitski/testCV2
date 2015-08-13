@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>767</width>
+    <height>687</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <widget class="QLabel" name="srcImageLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>0</y>
+      <width>400</width>
+      <height>300</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="grayImageLabel">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>320</y>
+      <width>400</width>
+      <height>300</height>
+     </rect>
+    </property>
+    <property name="autoFillBackground">
+     <bool>false</bool>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="openButton">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>20</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="toGrayScaleButton">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>160</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>ToGrayScale</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="allocateObjButton">
+    <property name="geometry">
+     <rect>
+      <x>580</x>
+      <y>430</y>
+      <width>113</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Allocate obj</string>
+    </property>
+   </widget>
+   <widget class="QGroupBox" name="BriContGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>50</y>
+      <width>151</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Brightness and contrast</string>
+    </property>
+    <widget class="CustSpinBox" name="customContrSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>70</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-3</number>
+     </property>
+     <property name="maximum">
+      <number>3</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="contrastLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>70</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Contrast</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="brightnessLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>71</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Brightness</string>
+     </property>
+    </widget>
+    <widget class="CustSpinBox" name="customSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>30</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>-255</number>
+     </property>
+     <property name="maximum">
+      <number>255</number>
+     </property>
+     <property name="singleStep">
+      <number>5</number>
+     </property>
+     <property name="displayIntegerBase">
+      <number>10</number>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="binarGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>190</y>
+      <width>271</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Binarizsation</string>
+    </property>
+    <widget class="CustSpinBox" name="cSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>60</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>9</number>
+     </property>
+     <property name="value">
+      <number>9</number>
+     </property>
+    </widget>
+    <widget class="QLabel" name="clabel">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>60</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>C</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="adaptiveThresButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>20</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Binarization</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="blockSizeLabel">
+     <property name="geometry">
+      <rect>
+       <x>120</x>
+       <y>30</y>
+       <width>61</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Block size</string>
+     </property>
+    </widget>
+    <widget class="CustSpinBox" name="blockSizeSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>210</x>
+       <y>30</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>5</number>
+     </property>
+     <property name="maximum">
+      <number>145</number>
+     </property>
+     <property name="singleStep">
+      <number>10</number>
+     </property>
+     <property name="value">
+      <number>145</number>
+     </property>
+     <property name="displayIntegerBase">
+      <number>10</number>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="filterGroupBox">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>280</y>
+      <width>271</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>Filters</string>
+    </property>
+    <widget class="QSpinBox" name="maxSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>100</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>2</number>
+     </property>
+     <property name="maximum">
+      <number>9</number>
+     </property>
+     <property name="value">
+      <number>2</number>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="minSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>60</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>2</number>
+     </property>
+     <property name="maximum">
+      <number>9</number>
+     </property>
+     <property name="value">
+      <number>2</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="denyFilterButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>20</y>
+       <width>60</width>
+       <height>60</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>&lt;-</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="minFilterButton">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>60</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Erode</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="medianSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>20</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="minimum">
+      <number>3</number>
+     </property>
+     <property name="maximum">
+      <number>15</number>
+     </property>
+     <property name="singleStep">
+      <number>2</number>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="medianFilterButton">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>20</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Median</string>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="maxFilterButton">
+     <property name="geometry">
+      <rect>
+       <x>90</x>
+       <y>100</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Dilating</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="denyLabel">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>80</y>
+       <width>61</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Deny last
+ filter</string>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>470</y>
+      <width>271</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>GroupBox</string>
+    </property>
+    <widget class="QPushButton" name="kmeansButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>20</y>
+       <width>113</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>kmeans</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="clusterNumberLabel">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>20</y>
+       <width>101</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Cluster number</string>
+     </property>
+    </widget>
+    <widget class="QSpinBox" name="clusterSpinBox">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>20</y>
+       <width>49</width>
+       <height>24</height>
+      </rect>
+     </property>
+     <property name="maximum">
+      <number>7</number>
+     </property>
+     <property name="value">
+      <number>2</number>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QTableView" name="clusterTableView">
+    <property name="geometry">
+     <rect>
+      <x>490</x>
+      <y>530</y>
+      <width>221</width>
+      <height>91</height>
+     </rect>
+    </property>
+    <property name="lineWidth">
+     <number>1</number>
+    </property>
+    <property name="midLineWidth">
+     <number>0</number>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>767</width>
+     <height>22</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>CustSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header location="global">custspinbox.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
