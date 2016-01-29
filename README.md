@@ -1,4 +1,4 @@
 # testCV2
 
 C++ Qt project
-OpenCV
+OpenCV, image processing
