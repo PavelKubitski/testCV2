@@ -1,16 +1,16 @@
-#include "converter.h"
+#include "ImageConverter.h"
 
-Converter::Converter(QObject *parent) : QObject(parent)
+ImageConverter::ImageConverter(QObject *parent) : QObject(parent)
 {
 
 }
 
-Converter::~Converter()
+ImageConverter::~ImageConverter()
 {
 
 }
 
-QImage*  Converter::IplImage2QImage(IplImage *iplImg)
+QImage*  ImageConverter::IplImage2QImage(IplImage *iplImg)
 {
 int h = iplImg->height;
 int w = iplImg->width;
@@ -51,7 +51,7 @@ for (int y = 0; y < h; y++, data += iplImg->widthStep)
 }
 
 
-IplImage* Converter::Image2IplImage(const QImage * qImage)
+IplImage* ImageConverter::Image2IplImage(const QImage * qImage)
 {
 
     int width = qImage->width();
@@ -72,7 +72,7 @@ IplImage* Converter::Image2IplImage(const QImage * qImage)
     return img;
 }
 
-QImage Converter::MatToQImage( const Mat &inMat )
+QImage ImageConverter::MatToQImage( const Mat &inMat )
    {
       switch ( inMat.type() )
       {

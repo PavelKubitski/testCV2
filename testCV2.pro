@@ -16,14 +16,16 @@ CONFIG += console
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    converter.cpp \
     custspinbox.cpp \
-    seed.cpp
+    seed.cpp \
+    ImageConverter.cpp \
+    ColorSystemConverter.cpp
 
 HEADERS  += mainwindow.h \
-    converter.h \
     custspinbox.h \
-    seed.h
+    seed.h \
+    ImageConverter.h \
+    ColorSystemConverter.h
 
 FORMS    += mainwindow.ui
 

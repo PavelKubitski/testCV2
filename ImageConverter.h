@@ -10,12 +10,12 @@
 using namespace cv;
 using namespace std;
 
-class Converter : public QObject
+class ImageConverter : public QObject
 {
     Q_OBJECT
 public:
-    explicit Converter(QObject *parent = 0);
-    ~Converter();
+    explicit ImageConverter(QObject *parent = 0);
+    ~ImageConverter();
 
     static QImage* IplImage2QImage(IplImage *iplImg);
     static IplImage * Image2IplImage(const QImage * qImage);

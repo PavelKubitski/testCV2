@@ -1,7 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include <converter.h>
+#include <ImageConverter.h>
 #include <QFileDialog>
 #include <QString>
 #include <QMessageBox>
@@ -9,6 +9,7 @@
 #include <QVector>
 #include <seed.h>
 #include "QStandardItemModel"
+#include <ColorSystemConverter.h>
 
 namespace Ui {
 class MainWindow;
@@ -35,6 +36,10 @@ public slots:
     void AllocateObjects();
     void Kmeans();
     void ShowKmeansStatistics();
+    void ChangeColorSystemRGBtoCMYK();
+    void ChangeColorSystemRGBtoHSV();
+    void ChangeColorSystemRGBtoHLS();
+    void ChangeColorSystemRGBtoLab();
 private:
 
     Mat matsrc;
@@ -51,6 +56,8 @@ private:
     void showOnSrcLabel(Mat);
     void showOnGrayLabel(Mat);
 
+    int main1();
+    void rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk);
 
 
     void calculateArea(Mat srcImg);
