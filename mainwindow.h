@@ -32,8 +32,10 @@ public slots:
     void MedianFilter();
     void DenyFilter();
     void ErodeFilter();
+    void CircuitFilter();
     void DilatingFilter();
     void AllocateObjects();
+    void OpeningFilter();
     void Kmeans();
     void ShowKmeansStatistics();
     void ChangeColorSystemRGBtoCMYK();

@@ -29,6 +29,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->HSVButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHSV()));
     connect(ui->HLSButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHLS()));
     connect(ui->LABButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoLab()));
+    connect(ui->circuitButton, SIGNAL(clicked()), this, SLOT(CircuitFilter()));
+    connect(ui->openingButton, SIGNAL(clicked()), this, SLOT(OpeningFilter()));
+
 }
 
 MainWindow::~MainWindow()
@@ -369,6 +372,81 @@ void MainWindow::DilatingFilter()
     }
 }
 
+void MainWindow::CircuitFilter()
+{
+    if(!matsrc.empty())
+    {
+        if(binarizated == true)
+        {
+            ui->toGrayScaleButton->setEnabled(false);
+            ui->adaptiveThresButton->setEnabled(false);
+            if(!duplicateMatSrc.empty())
+            {
+                matsrc = duplicateMatSrc.clone();
+                duplicateMatSrc.release();
+            }
+            imgStack.push(matsrc);
+            Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
+            int kSize = ui->circuitSpinBox->value();
+            Mat element(kSize, kSize, CV_8U, Scalar(1));
+            dilate(matsrc, dst, element);
+            matsrc = dst.clone();
+            erode(matsrc, dst, element);
+            matsrc = dst.clone();
+            showOnSrcLabel(matsrc);
+            dst.release();
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Dilating filter"), tr("Image is not binarizated"));
+        }
+    }
+    else
+    {
+        QMessageBox::information(this, tr("Dilating filter"), tr("Image is not downloaded"));
+    }
+}
+
+void MainWindow::OpeningFilter()
+{
+    if(!matsrc.empty())
+    {
+        if(binarizated == true)
+        {
+            ui->toGrayScaleButton->setEnabled(false);
+            ui->adaptiveThresButton->setEnabled(false);
+            if(!duplicateMatSrc.empty())
+            {
+                matsrc = duplicateMatSrc.clone();
+                duplicateMatSrc.release();
+            }
+            imgStack.push(matsrc);
+            Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
+            int kSize = ui->openingSpinBox->value();
+            Mat element(kSize, kSize, CV_8U, Scalar(1));
+            erode(matsrc, dst, element);
+            matsrc = dst.clone();
+            dilate(matsrc, dst, element);
+            matsrc = dst.clone();
+            showOnSrcLabel(matsrc);
+            dst.release();
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Dilating filter"), tr("Image is not binarizated"));
+        }
+    }
+    else
+    {
+        QMessageBox::information(this, tr("Dilating filter"), tr("Image is not downloaded"));
+    }
+}
+
+
+
+
+
+
 void MainWindow::AllocateObjects()
 {
 
@@ -660,89 +738,32 @@ void MainWindow::ChangeColorSystemRGBtoCMYK()
 {
     std::vector<cv::Mat> CMYKvector;
     Mat img = ColorSystemConverter::rgb2cmyk(this->matsrc, CMYKvector);
-//    this->showOnGrayLabel(img);
+    this->showOnGrayLabel(this->matsrc);       //потому что не отличается
 
-//    main1();
+
 }
 
 void MainWindow::ChangeColorSystemRGBtoHSV()
 {
 
     Mat img = ColorSystemConverter::rgb2hsv(this->matsrc);
-//    this->showOnGrayLabel(img);
+    this->showOnGrayLabel(img);
 }
 
 void MainWindow::ChangeColorSystemRGBtoHLS()
 {
 
     Mat img = ColorSystemConverter::rgb2hls(this->matsrc);
-//    this->showOnGrayLabel(img);
+    this->showOnGrayLabel(img);
 }
 
 void MainWindow::ChangeColorSystemRGBtoLab()
 {
 
     Mat img = ColorSystemConverter::rgb2lab(this->matsrc);
-//    this->showOnGrayLabel(img);
+    this->showOnGrayLabel(img);
 }
 
 
-void MainWindow::rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk) {
-    // Allocate cmyk to store 4 componets
-    for (int i = 0; i < 4; i++) {
-        cmyk.push_back(cv::Mat(img.size(), CV_8UC1));
-    }
-
-    // Get rgb
-    std::vector<cv::Mat> rgb;
-    cv::split(img, rgb);
-
-    // rgb to cmyk
-    for (int i = 0; i < img.rows; i++) {
-        for (int j = 0; j < img.cols; j++) {
-            float r = (int)rgb[2].at<uchar>(i, j) / 255.;
-            float g = (int)rgb[1].at<uchar>(i, j) / 255.;
-            float b = (int)rgb[0].at<uchar>(i, j) / 255.;
-            float k = std::min(std::min(1- r, 1- g), 1- b);
-
-            cmyk[0].at<uchar>(i, j) = (1 - r - k) / (1 - k) * 255.;
-            cmyk[1].at<uchar>(i, j) = (1 - g - k) / (1 - k) * 255.;
-            cmyk[2].at<uchar>(i, j) = (1 - b - k) / (1 - k) * 255.;
-            cmyk[3].at<uchar>(i, j) = k * 255.;
-        }
-    }
-
-    int r = img.at<Vec3b>(0,0)[2];
-    int g = img.at<Vec3b>(0,0)[1];
-    int b = img.at<Vec3b>(0,0)[0];
-
-    int c = cmyk[0].at<uchar>(0,0);
-    int m = cmyk[1].at<uchar>(0,0);
-    int y = cmyk[2].at<uchar>(0,0);
-    int k = cmyk[3].at<uchar>(0,0);
-
-    printf("r = %d, g = %d, b = %d", r, g, b);
-    printf("c = %d, m = %d, y = %d, k = %d", c, m, y, k);
-
-
-}
-
-// Test rgb2cmyk function
-int MainWindow::main1() {
-    // TODO: change filename
-    cv::Mat src = this->matsrc;
-    std::vector<cv::Mat> dst;
-    rgb2cmyk(src, dst);
-
-    // Display results
-    cv::imshow("src", src);
-    cv::imshow("c", dst[0]);
-    cv::imshow("m", dst[1]);
-    cv::imshow("y", dst[2]);
-    cv::imshow("k", dst[3]);
-
-
-    return 0;
-}
 
 
