@@ -19,13 +19,15 @@ SOURCES += main.cpp\
     custspinbox.cpp \
     seed.cpp \
     ImageConverter.cpp \
-    ColorSystemConverter.cpp
+    ColorSystemConverter.cpp \
+    MorphologyOperation.cpp
 
 HEADERS  += mainwindow.h \
     custspinbox.h \
     seed.h \
     ImageConverter.h \
-    ColorSystemConverter.h
+    ColorSystemConverter.h \
+    MorphologyOperation.h
 
 FORMS    += mainwindow.ui
 

@@ -10,6 +10,7 @@
 #include <seed.h>
 #include "QStandardItemModel"
 #include <ColorSystemConverter.h>
+#include <MorphologyOperation.h>
 
 namespace Ui {
 class MainWindow;
@@ -29,6 +30,7 @@ public slots:
     void ChangeBrightness();
     void ChangeContrast();
     void AdaptiveThreshold();
+    void AdaptiveThresholdOtsu();
     void MedianFilter();
     void DenyFilter();
     void ErodeFilter();
@@ -42,6 +44,7 @@ public slots:
     void ChangeColorSystemRGBtoHSV();
     void ChangeColorSystemRGBtoHLS();
     void ChangeColorSystemRGBtoLab();
+    void MorfologySkeleton();
 private:
 
     Mat matsrc;

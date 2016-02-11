@@ -251,6 +251,19 @@
       <number>10</number>
      </property>
     </widget>
+    <widget class="QPushButton" name="otsuButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>50</y>
+       <width>115</width>
+       <height>32</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Otsu</string>
+     </property>
+    </widget>
    </widget>
    <widget class="QGroupBox" name="filterGroupBox">
     <property name="geometry">
@@ -274,13 +287,13 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>2</number>
+      <number>5</number>
      </property>
      <property name="maximum">
       <number>9</number>
      </property>
      <property name="value">
-      <number>2</number>
+      <number>5</number>
      </property>
     </widget>
     <widget class="QSpinBox" name="minSpinBox">
@@ -338,7 +351,7 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>3</number>
+      <number>9</number>
      </property>
      <property name="maximum">
       <number>15</number>
@@ -442,10 +455,13 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>2</number>
+      <number>1</number>
      </property>
      <property name="maximum">
       <number>9</number>
+     </property>
+     <property name="value">
+      <number>2</number>
      </property>
      <property name="displayIntegerBase">
       <number>10</number>
@@ -506,10 +522,6 @@
       <number>2</number>
      </property>
     </widget>
-    <zorder>kmeansButton</zorder>
-    <zorder>clusterNumberLabel</zorder>
-    <zorder>clusterSpinBox</zorder>
-    <zorder>allocateObjButton</zorder>
    </widget>
    <widget class="QTableView" name="clusterTableView">
     <property name="geometry">
@@ -577,6 +589,19 @@
     </property>
     <property name="text">
      <string>LAB</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="skeletonButton">
+    <property name="geometry">
+     <rect>
+      <x>434</x>
+      <y>280</y>
+      <width>51</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Skelton</string>
     </property>
    </widget>
   </widget>

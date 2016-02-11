@@ -31,7 +31,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->LABButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoLab()));
     connect(ui->circuitButton, SIGNAL(clicked()), this, SLOT(CircuitFilter()));
     connect(ui->openingButton, SIGNAL(clicked()), this, SLOT(OpeningFilter()));
-
+    connect(ui->otsuButton, SIGNAL(clicked()), this, SLOT(AdaptiveThresholdOtsu()));
+    connect(ui->skeletonButton, SIGNAL(clicked()), this, SLOT(MorfologySkeleton()));
 }
 
 MainWindow::~MainWindow()
@@ -48,12 +49,17 @@ void MainWindow::OpenPicture()
     nameOfOpenFile = QFileDialog::getOpenFileName(this,
                                         tr("Open File"), QDir::currentPath(),tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
 
+//    nameOfOpenFile = "bean.jpg";
+//    nameOfOpenFile = "seedslight.jpg";
+
+
     if(!nameOfOpenFile.isEmpty())
     {
             nameOfFile = nameOfOpenFile.toUtf8().constData();
 
             ClearForm();
             matsrc = imread(nameOfFile);
+//            matsrc = imread("bean.jpg");
 
             if(!matsrc.empty())
             {
@@ -65,7 +71,14 @@ void MainWindow::OpenPicture()
                 QMessageBox::information(this, tr("Loading image"), tr("Can't load %1.").arg(nameOfOpenFile));
             }
     }
+
+//    ToGrayScale();
+//    AdaptiveThresholdOtsu();
 }
+
+
+
+
 
 void MainWindow::ToGrayScale()
 {
@@ -266,6 +279,106 @@ void MainWindow::AdaptiveThreshold()
         QMessageBox::information(this, tr("Adaptive threshold"), tr("Image is not downloaded"));
     }
 }
+
+
+//blur = cv2.GaussianBlur(img,(5,5),0)
+//    ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+
+void MainWindow::AdaptiveThresholdOtsu()
+{
+    if(!matsrc.empty())
+    {
+        if(matsrc.channels() == 1)
+        {
+            ui->toGrayScaleButton->setEnabled(false);
+            Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
+            GaussianBlur(matsrc, dst, Size(5,5),0);
+//            threshold(dst, matsrc, 0, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
+            threshold(dst, matsrc, 0, 255, CV_THRESH_OTSU);
+            bitwise_not (matsrc, matsrc);
+            duplicateMatSrc = matsrc.clone();
+
+            showOnGrayLabel(duplicateMatSrc);
+
+            binarizated = true;
+            dst.release();
+        }
+        else
+        {
+            QMessageBox::information(this, tr("Binarization"), tr("Your image must be in grayscale.\n Press button ToGrayScale."));
+        }
+    }
+    else
+    {
+        QMessageBox::information(this, tr("Adaptive threshold"), tr("Image is not downloaded"));
+    }
+}
+
+void MainWindow::MorfologySkeleton()
+{
+    if(!matsrc.empty())
+    {
+//        if(matsrc.channels() == 1)
+//        if(matsrc != NULL)
+        {
+            ui->toGrayScaleButton->setEnabled(false);
+
+            Mat copyMat = matsrc.clone();
+
+            cv::Mat skel(matsrc.size(), CV_8UC1, cv::Scalar(0));
+            cv::Mat temp(matsrc.size(), CV_8UC1);
+            cv::Mat element = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
+            bitwise_not(matsrc, matsrc);
+            showOnGrayLabel(matsrc);
+            imshow("matsrc first", matsrc);
+
+            bool done;
+            do
+            {
+              cv::morphologyEx(matsrc, temp, cv::MORPH_OPEN, element);
+              cv::bitwise_not(temp, temp);
+              cv::bitwise_and(matsrc, temp, temp);
+              cv::bitwise_or(skel, temp, skel);
+              cv::erode(matsrc, matsrc, element);
+
+              double max;
+              cv::minMaxLoc(matsrc, 0, &max);
+              done = (max == 0);
+            } while (!done);
+
+//            cv::imshow("Skeleton", skel);
+
+            matsrc = skel.clone();
+
+            DilatingFilter();
+
+            imshow("opening filter", matsrc);
+
+            MorphologyOperation::findEdgeChains(matsrc);
+
+            addWeighted( copyMat, 0.5, skel, 0.5, 0.0, matsrc);
+            imshow("2", matsrc);
+            duplicateMatSrc = matsrc.clone();
+
+//            showOnGrayLabel(duplicateMatSrc);
+//            showOnGrayLabel(matsrc);
+
+            binarizated = true;
+//            dst.release();
+        }
+//        else
+//        {
+//            QMessageBox::information(this, tr("Binarization"), tr("Your image must be in grayscale.\n Press button ToGrayScale."));
+//        }
+    }
+    else
+    {
+        QMessageBox::information(this, tr("Adaptive threshold"), tr("Image is not downloaded"));
+    }
+}
+
+
+
 
 void MainWindow::MedianFilter()
 {
