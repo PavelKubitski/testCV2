@@ -20,9 +20,27 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
+    enum ColorSystem { NONE, CMYK, HSV, HLS, LAB };
+    vector<Mat> CSvector;     //CS- color system
+    vector<Mat> CSvectorColored;
+
+    ColorSystem lastColorSystem;
+    int currentIndex;
+    Mat matsrc;
+    Mat duplicateMatSrc;
+    Ui::MainWindow *ui;
+    QStack<Mat> imgStack;
+    QVector<Seed> seedVect;
+
+    bool binarizated;
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
+
+
+
+
 
 public slots:
     void OpenPicture();
@@ -44,22 +62,24 @@ public slots:
     void ChangeColorSystemRGBtoHSV();
     void ChangeColorSystemRGBtoHLS();
     void ChangeColorSystemRGBtoLab();
-    void MorfologySkeleton();
+    void MorphologySkeleton();
+
+
+
+private slots:
+    void on_grayScaleCheckBox_clicked();
+
 private:
 
-    Mat matsrc;
-    Mat duplicateMatSrc;
-    Ui::MainWindow *ui;
-    QStack<Mat> imgStack;
-    QVector<Seed> seedVect;
 
-    bool binarizated;
     void ClearForm();
     void BrightnessAdjust(Mat &srcImg, Mat &dstImg, float brightness);
     void ContrastAdjust(Mat &srcImg, Mat &dstImg, float contrast);
     float GetValidContrast(float );
     void showOnSrcLabel(Mat);
-    void showOnGrayLabel(Mat);
+    void showOnGrayLabel(Mat, QString title);
+    void ChangeColorSystemRGBtoAnother(ColorSystem cs, QString systemName);
+    void DeleteAllTabs();
 
     int main1();
     void rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk);

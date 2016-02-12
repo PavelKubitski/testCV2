@@ -11,9 +11,10 @@ ColorSystemConverter::~ColorSystemConverter()
 
 }
 
-cv::Mat ColorSystemConverter::rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk) {
+vector<cv::Mat> ColorSystemConverter::rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk)
+{
 
-    Mat channel[4], src;
+    Mat channel[4];
 
     for (int i = 0; i < 4; i++) {
         cmyk.push_back(cv::Mat(img.size(), CV_8UC1));
@@ -22,7 +23,7 @@ cv::Mat ColorSystemConverter::rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk)
 
 
 
-    std::vector<cv::Mat> rgb;
+    std::vector<cv::Mat> rgb, cmykColored;
     cv::split(img, rgb);
 
     for (int i = 0; i < img.rows; i++) {
@@ -49,77 +50,101 @@ cv::Mat ColorSystemConverter::rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk)
     bitwise_not(channel[2], channel[2]);
     bitwise_not(channel[3], channel[3]);
 
+    cmyk[0] = channel[0].clone();
+    cmyk[1] = channel[1].clone();
+    cmyk[2] = channel[2].clone();
+    cmyk[3] = channel[3].clone();
 
 
 
-//    imshow("c", channel[0]);
-//    imshow("m", channel[1]);
-//    imshow("y", channel[2]);
-//    imshow("k", channel[3]);
 
-    std::string hsv_labels[3] = {"[C]yan", "[M]agenta", "[Y]ellow"};
+
+    std::string cmyk_labels[3] = {"[C]yan", "[M]agenta", "[Y]ellow"};
     double std_values[3][3] = {{255, 255, 0}, {255, 0, 255}, {0, 255, 255}};
-    showChannels(img, channel, hsv_labels, std_values, COLOR_HSV2BGR, true);
+    cmykColored = showChannels(img, channel, cmyk_labels, std_values, COLOR_HSV2BGR, true);
 
-    return src;
+    return cmykColored;
 }
 
 
-Mat ColorSystemConverter::rgb2hsv(Mat img)
+vector<Mat> ColorSystemConverter::rgb2hsv(Mat img, vector<cv::Mat>& hsvVector)
 {
+    vector<Mat> hsvVectorColored;
     Mat hsv;
     Mat channel[3];
+    for (int i = 0; i < 3; i++) {
+        hsvVector.push_back(cv::Mat(img.size(), CV_8UC1));
+    }
     cvtColor(img,hsv,CV_BGR2HSV);
 
     split(hsv, channel);
 
+    hsvVector[0] = channel[0].clone();
+    hsvVector[1] = channel[1].clone();
+    hsvVector[2] = channel[2].clone();
+
     std::string hsv_labels[3] = {"[H]ue", "[S]aturation", "[V]alue"};
     double std_values[3][3] = {{1, 255, 255}, {179, 1, 255}, {179, 0, 1}};
-    showChannels(img, channel, hsv_labels, std_values, COLOR_HSV2BGR, false);
+    hsvVectorColored = showChannels(img, channel, hsv_labels, std_values, COLOR_HSV2BGR, false);
 
-    return hsv;
+    return hsvVectorColored;
 }
 
-Mat ColorSystemConverter::rgb2hls(Mat img)
+vector<Mat> ColorSystemConverter::rgb2hls(Mat img, vector<Mat> &hlsVector)
 {
+    vector<Mat> hlsVectorColored;
     Mat hls;
     Mat channel[3];
+    for (int i = 0; i < 3; i++) {
+        hlsVector.push_back(cv::Mat(img.size(), CV_8UC1));
+    }
     cvtColor(img,hls,CV_BGR2HLS);
     split(hls, channel);
+    hlsVector[0] = channel[0].clone();
+    hlsVector[1] = channel[1].clone();
+    hlsVector[2] = channel[2].clone();
 
     std::string hls_labels[3] = {"[H]ue", "[L]ightness", "[S]aturation"};
     double std_values[3][3] = {{1, 100, 50}, {179, 1, 255}, {179, 69, 1}};
 
-    showChannels(img, channel, hls_labels, std_values, COLOR_HLS2BGR, false);
+    hlsVectorColored = showChannels(img, channel, hls_labels, std_values, COLOR_HLS2BGR, false);
 
-//    imshow("img", img);
-//    imshow("hls", hls);
-    return hls;
+
+    return hlsVectorColored;
 }
 
-Mat ColorSystemConverter::rgb2lab(Mat img)
+vector<Mat> ColorSystemConverter::rgb2lab(Mat img, vector<Mat> &labVector)
 {
+    vector<Mat> labVectorColored;
     Mat lab;
     Mat channel[3];
+    for (int i = 0; i < 3; i++) {
+        labVector.push_back(Mat(img.size(), CV_8UC1));
+    }
     cvtColor(img,lab,CV_BGR2Lab);
     split(lab, channel);
-    std::string hsv_labels[3] = {"[L]uminance", "A (dimension)", "B (dimension)"};
+
+    labVector[0] = channel[0].clone();
+    labVector[1] = channel[1].clone();
+    labVector[2] = channel[2].clone();
+
+    std::string lab_labels[3] = {"[L]uminance", "A (dimension)", "B (dimension)"};
     double std_values[3][3] = {{1, 127.5, 127.5}, {191.25, 1, 127.5}, {191.25, 127.5, 1}};
-    showChannels(img, channel, hsv_labels, std_values, COLOR_Lab2BGR, false);
-//    imshow("img", img);
-//    imshow("lab", lab);
-    return lab;
+    labVectorColored = showChannels(img, channel, lab_labels, std_values, COLOR_Lab2BGR, false);
+
+    return labVectorColored;
 }
 
-void ColorSystemConverter::showChannels(Mat inputImage, Mat channel[], std::string labels[], double scalar[][3], int convertBack, bool CMYK = false)
+vector<Mat> ColorSystemConverter::showChannels(Mat inputImage, Mat channel[], std::string labels[], double scalar[][3], int convertBack, bool CMYK = false)
 {
     Mat aux[3], outputImage;
-    int limit = 3;
-    if (CMYK) limit = 4;
 
-    outputImage = Mat(inputImage.rows, inputImage.cols, inputImage.type());
+     vector<Mat> coloredSystem;
+
+
     for(int i = 0; i < 3; i++)
     {
+        outputImage = Mat(inputImage.rows, inputImage.cols, inputImage.type());
         // fill the base Mat with standard values based on CS143 from Brown
         aux[0] = Mat::ones(inputImage.rows, inputImage.cols, CV_8UC1) * scalar[i][0];
         aux[1] = Mat::ones(inputImage.rows, inputImage.cols, CV_8UC1) * scalar[i][1];
@@ -128,14 +153,19 @@ void ColorSystemConverter::showChannels(Mat inputImage, Mat channel[], std::stri
         // merge the channels back together
         merge(aux, 3, outputImage);
         // convert from output color space to BGR
-        if (!CMYK)      cvtColor(outputImage, outputImage, convertBack);
-        imshow(labels[i] + " (3-Channels)", outputImage);
+        if (!CMYK)
+            cvtColor(outputImage, outputImage, convertBack);
+
+        coloredSystem.push_back(outputImage);
     }
 
     if (CMYK)
     {
-        imshow("K", channel[3]);
+//        imshow("K", channel[3]);
+        coloredSystem.push_back(channel[3]);
     }
+
+    return coloredSystem;
 }
 
 void cmyk2rgb(const Mat & c,const Mat & m,const Mat & y,const Mat & k, Mat & rgb )

@@ -20,16 +20,19 @@ SOURCES += main.cpp\
     seed.cpp \
     ImageConverter.cpp \
     ColorSystemConverter.cpp \
-    MorphologyOperation.cpp
+    MorphologyOperation.cpp \
+    ImageLabelForm.cpp
 
 HEADERS  += mainwindow.h \
     custspinbox.h \
     seed.h \
     ImageConverter.h \
     ColorSystemConverter.h \
-    MorphologyOperation.h
+    MorphologyOperation.h \
+    ImageLabelForm.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    ImageLabelForm.ui
 
 INCLUDEPATH += /usr/local/include
 

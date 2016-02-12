@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "ImageLabelForm.h"
 
 using namespace cv;
 
@@ -12,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    contrastUsed = false;
     binarizated = false;
     ui->srcImageLabel->setStyleSheet("QLabel { background-color : white;}");
-    ui->grayImageLabel->setStyleSheet("QLabel { background-color : white;}");
+
     connect(ui->openButton, SIGNAL(clicked()), this, SLOT(OpenPicture()));
     connect(ui->toGrayScaleButton, SIGNAL(clicked()), this, SLOT(ToGrayScale()));
 
@@ -32,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->circuitButton, SIGNAL(clicked()), this, SLOT(CircuitFilter()));
     connect(ui->openingButton, SIGNAL(clicked()), this, SLOT(OpeningFilter()));
     connect(ui->otsuButton, SIGNAL(clicked()), this, SLOT(AdaptiveThresholdOtsu()));
-    connect(ui->skeletonButton, SIGNAL(clicked()), this, SLOT(MorfologySkeleton()));
+    connect(ui->skeletonButton, SIGNAL(clicked()), this, SLOT(MorphologySkeleton()));
 }
 
 MainWindow::~MainWindow()
@@ -82,22 +83,28 @@ void MainWindow::OpenPicture()
 
 void MainWindow::ToGrayScale()
 {
-
-    Mat gray = Mat::zeros(matsrc.size(), matsrc.type());
-    if(!matsrc.empty())
+    if(lastColorSystem != NONE)
     {
-        cvtColor(matsrc, gray, CV_BGR2GRAY);
-        matsrc = gray.clone();
-        QImage imageView = ImageConverter::MatToQImage(matsrc);
-        ui->grayImageLabel->setPixmap(QPixmap::fromImage(imageView));
-        ui->grayImageLabel->setScaledContents(true);
-        imgStack.clear();
+        matsrc = CSvector[ui->tabWidget->currentIndex()].clone();
+//        imshow("gray", matsrc);
+        showOnGrayLabel(matsrc, "Grayscale");
     }
     else
     {
-        QMessageBox::information(this, tr("To gray scale"), tr("Image is not downloaded"));
+        Mat gray = Mat::zeros(matsrc.size(), matsrc.type());
+        if(!matsrc.empty())
+        {
+            cvtColor(matsrc, gray, CV_BGR2GRAY);
+            matsrc = gray.clone();
+            showOnGrayLabel(matsrc, "Grayscale");
+            imgStack.clear();
+        }
+        else
+        {
+            QMessageBox::information(this, tr("To gray scale"), tr("Image is not downloaded"));
+        }
+        gray.release();
     }
-    gray.release();
 }
 
 void MainWindow::ClearForm()
@@ -107,7 +114,7 @@ void MainWindow::ClearForm()
     matsrc.release();
     duplicateMatSrc.release();
     ui->srcImageLabel->clear();
-    ui->grayImageLabel->clear();
+    DeleteAllTabs();
     imgStack.clear();
     seedVect.clear();
     ui->blockSizeSpinBox->setValue(145);
@@ -231,11 +238,12 @@ void MainWindow::showOnSrcLabel(Mat matImage)
     ui->srcImageLabel->setScaledContents(true);
 }
 
-void MainWindow::showOnGrayLabel(Mat image)
+void MainWindow::showOnGrayLabel(Mat image, QString title)
 {
-    QImage imageView = ImageConverter::MatToQImage(image);
-    ui->grayImageLabel->setPixmap(QPixmap::fromImage(imageView));
-    ui->grayImageLabel->setScaledContents(true);
+    DeleteAllTabs();
+    ImageLabelForm *imgLbl = new ImageLabelForm();
+    imgLbl->setImage(image);
+    ui->tabWidget->insertTab(ui->tabWidget->count(), imgLbl, QIcon(QString("")), (QString)title);
 }
 
 float MainWindow::GetValidContrast(float contrast)
@@ -265,7 +273,7 @@ void MainWindow::AdaptiveThreshold()
             Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
             adaptiveThreshold(matsrc, dst, 255,CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY_INV, blockSize, constantC);
             duplicateMatSrc = dst.clone();
-            showOnGrayLabel(duplicateMatSrc);
+            showOnGrayLabel(duplicateMatSrc, "Binarizatin");
             binarizated = true;
             dst.release();
         }
@@ -298,7 +306,7 @@ void MainWindow::AdaptiveThresholdOtsu()
             bitwise_not (matsrc, matsrc);
             duplicateMatSrc = matsrc.clone();
 
-            showOnGrayLabel(duplicateMatSrc);
+            showOnGrayLabel(duplicateMatSrc, "Otsu binarization");
 
             binarizated = true;
             dst.release();
@@ -314,7 +322,7 @@ void MainWindow::AdaptiveThresholdOtsu()
     }
 }
 
-void MainWindow::MorfologySkeleton()
+void MainWindow::MorphologySkeleton()
 {
     if(!matsrc.empty())
     {
@@ -329,8 +337,8 @@ void MainWindow::MorfologySkeleton()
             cv::Mat temp(matsrc.size(), CV_8UC1);
             cv::Mat element = cv::getStructuringElement(cv::MORPH_CROSS, cv::Size(3, 3));
             bitwise_not(matsrc, matsrc);
-            showOnGrayLabel(matsrc);
-            imshow("matsrc first", matsrc);
+            showOnGrayLabel(matsrc, "Morphology skeleton");
+//            imshow("matsrc first", matsrc);
 
             bool done;
             do
@@ -849,34 +857,75 @@ Scalar MainWindow::getColor(int cluster)
 
 void MainWindow::ChangeColorSystemRGBtoCMYK()
 {
-    std::vector<cv::Mat> CMYKvector;
-    Mat img = ColorSystemConverter::rgb2cmyk(this->matsrc, CMYKvector);
-    this->showOnGrayLabel(this->matsrc);       //потому что не отличается
-
-
+    ChangeColorSystemRGBtoAnother(CMYK ,"CMYK");
 }
 
 void MainWindow::ChangeColorSystemRGBtoHSV()
 {
-
-    Mat img = ColorSystemConverter::rgb2hsv(this->matsrc);
-    this->showOnGrayLabel(img);
+    ChangeColorSystemRGBtoAnother(HSV ,"HSV");
 }
 
 void MainWindow::ChangeColorSystemRGBtoHLS()
 {
-
-    Mat img = ColorSystemConverter::rgb2hls(this->matsrc);
-    this->showOnGrayLabel(img);
+    ChangeColorSystemRGBtoAnother(HLS ,"HLS");
 }
 
 void MainWindow::ChangeColorSystemRGBtoLab()
 {
+    ChangeColorSystemRGBtoAnother(LAB , "LAB");
+}
 
-    Mat img = ColorSystemConverter::rgb2lab(this->matsrc);
-    this->showOnGrayLabel(img);
+void MainWindow::ChangeColorSystemRGBtoAnother(ColorSystem cs, QString systemName)
+{
+    DeleteAllTabs();
+    CSvector.clear();
+    CSvectorColored.clear();
+    lastColorSystem = cs;
+
+    switch (cs) {
+    case CMYK:
+        CSvectorColored = ColorSystemConverter::rgb2cmyk(this->matsrc, CSvector);
+        break;
+    case HSV:
+        CSvectorColored = ColorSystemConverter::rgb2hsv(this->matsrc, CSvector);
+        break;
+    case HLS:
+        CSvectorColored = ColorSystemConverter::rgb2hls(this->matsrc, CSvector);
+        break;
+    case LAB:
+        CSvectorColored = ColorSystemConverter::rgb2lab(this->matsrc, CSvector);
+        break;
+    default:
+        break;
+    }
+
+    for(int i = 0; i < (int)CSvector.size(); i++)
+    {
+        ImageLabelForm *imgLbl = new ImageLabelForm();
+        if(ui->grayScaleCheckBox->isChecked())
+            imgLbl->setImage(CSvectorColored[i]);
+        else
+            imgLbl->setImage(CSvector[i]);
+        ui->tabWidget->insertTab(ui->tabWidget->count(), imgLbl, QIcon(QString("")), (QString)systemName[i]);
+    }
+
+    ui->tabWidget->setCurrentIndex(0);
+
+}
+
+void MainWindow::DeleteAllTabs()
+{
+    while (ui->tabWidget->count() != 0)
+    {
+        ui->tabWidget->removeTab(0);
+    }
 }
 
 
-
-
+void MainWindow::on_grayScaleCheckBox_clicked()
+{
+    currentIndex = ui->tabWidget->currentIndex();
+    static const char * EnumStrings[] = { "CMYK", "HSV", "HLS", "LAB" };
+    ChangeColorSystemRGBtoAnother(lastColorSystem, EnumStrings[lastColorSystem]);
+    ui->tabWidget->setCurrentIndex(currentIndex);
+}

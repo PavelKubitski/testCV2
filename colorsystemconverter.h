@@ -19,11 +19,11 @@ class ColorSystemConverter : public QObject
 public:
     explicit ColorSystemConverter(QObject *parent = 0);
     ~ColorSystemConverter();
-    static cv::Mat rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk);
-    static Mat rgb2hsv(Mat img); //opencv doesn't display it corect
-    static Mat rgb2hls(Mat img);
-    static Mat rgb2lab(Mat img);
-    static void showChannels(Mat inputImage, Mat channel[], std::string labels[], double scalar[][3], int convertBack, bool CMYK);
+    static vector<Mat> rgb2cmyk(Mat& img, std::vector<Mat>& cmyk);
+    static vector<Mat> rgb2hsv(Mat img, vector<cv::Mat>& hsvVector); //opencv doesn't display it corect
+    static vector<Mat> rgb2hls(Mat img, vector<cv::Mat>& hlsVector);
+    static vector<Mat> rgb2lab(Mat img, vector<cv::Mat>& labVector);
+    static vector<Mat> showChannels(Mat inputImage, Mat channel[], std::string labels[], double scalar[][3], int convertBack, bool CMYK);
     static void cmyk2rgb(const Mat & c,const Mat & m,const Mat & y,const Mat & k, Mat & rgb );
 signals:
 
