@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->minFilterButton, SIGNAL(clicked()), this, SLOT(ErodeFilter()));
     connect(ui->maxFilterButton, SIGNAL(clicked()), this, SLOT(DilatingFilter()));
     connect(ui->allocateObjButton, SIGNAL(clicked()), this, SLOT(AllocateObjects()));
-    connect(ui->kmeansButton, SIGNAL(clicked()), this , SLOT(Kmeans()));
+    connect(ui->kmeansButton, SIGNAL(clicked()), this , SLOT(Classification()));
     connect(ui->CMYKButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoCMYK()));
     connect(ui->HSVButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHSV()));
     connect(ui->HLSButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHLS()));
@@ -47,11 +47,11 @@ void MainWindow::OpenPicture()
 {
     QString nameOfOpenFile;
     String nameOfFile;
-    nameOfOpenFile = QFileDialog::getOpenFileName(this,
-                                        tr("Open File"), QDir::currentPath(),tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+//    nameOfOpenFile = QFileDialog::getOpenFileName(this,
+//                                        tr("Open File"), QDir::currentPath(),tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
 
 //    nameOfOpenFile = "bean.jpg";
-//    nameOfOpenFile = "seedslight.jpg";
+    nameOfOpenFile = "sds.png";
 
 
     if(!nameOfOpenFile.isEmpty())
@@ -60,6 +60,7 @@ void MainWindow::OpenPicture()
 
             ClearForm();
             matsrc = imread(nameOfFile);
+            firstImage = matsrc.clone();
 //            matsrc = imread("bean.jpg");
 
             if(!matsrc.empty())
@@ -91,6 +92,7 @@ void MainWindow::ToGrayScale()
     }
     else
     {
+//        imshow("gray", matsrc);
         Mat gray = Mat::zeros(matsrc.size(), matsrc.type());
         if(!matsrc.empty())
         {
@@ -605,9 +607,16 @@ void MainWindow::AllocateObjects()
 
             showOnSrcLabel(drawing);
 
-            calculateArea(drawing);
-            calculatePerimetr(drawing);
-            calculateCompactness();
+            FeaturesCalculation calculator(drawing, seedVect);
+            calculator.calculateArea();
+            calculator.calculatePerimetr();
+            calculator.calculateCompactness();
+            calculator.calculateLumaParametre(firstImage);
+
+            seedVect = calculator.GetSeedVector();
+
+
+
             matsrc = drawing.clone();
             drawing.release();
         }
@@ -622,105 +631,9 @@ void MainWindow::AllocateObjects()
     }
 }
 
-void MainWindow::calculateArea(Mat srcImg)
-{
-    int oldArea, i;
 
-    for( int y = 0; y < srcImg.rows; y++ )
-       {
-            for( int x = 0; x < srcImg.cols; x++ )
-            {
-                if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[1] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[2] == 0))
-                {
-                    i = 0;
-                    for(Seed s: seedVect)
-                    {
 
-                        if(s.GetColor().val[0] == srcImg.at<Vec3b>(y,x)[0] &&
-                           s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
-                           s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
-                        {
 
-                            oldArea = s.GetArea();
-                            seedVect[i].SetArea(oldArea+1);
-                            break;
-                        }
-                        i++;
-                    }
-                }
-            }
-       }
-}
-
-void MainWindow::calculatePerimetr(Mat srcImg)
-{
-    int oldPerimetr, i;
-
-    for( int y = 0; y < srcImg.rows; y++ )
-       {
-            for( int x = 0; x < srcImg.cols; x++ )
-            {
-                if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[1] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[2] == 0))
-                {
-                    if(HaveBlackNeighbors(srcImg, x, y))
-                    {
-                        i = 0;
-                        for(Seed s: seedVect)
-                        {
-
-                            if(s.GetColor().val[0] == srcImg.at<Vec3b>(y,x)[0] &&
-                               s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
-                               s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
-                            {
-                                oldPerimetr = s.GetPerimetr();
-                                seedVect[i].SetPerimetr(oldPerimetr+1);
-                                break;
-                            }
-                            i++;
-                        }
-                    }
-                }
-            }
-       }
-}
-
-void MainWindow::calculateCompactness()
-{
-    double compact = 0;
-    for(int i = 0; i < seedVect.length(); i++)
-    {
-        compact = seedVect[i].GetPerimetr()*seedVect[i].GetPerimetr() / seedVect[i].GetArea();
-        seedVect[i].SetCompactness(compact);
-    }
-}
-
-bool MainWindow::HaveBlackNeighbors(Mat srcImg, int x, int y)
-{
-    if((srcImg.at<Vec3b>(y-1,x)[0] == 0 &&
-            srcImg.at<Vec3b>(y-1,x)[1] == 0 &&
-            srcImg.at<Vec3b>(y-1,x)[2] == 0) ||
-            (srcImg.at<Vec3b>(y+1,x)[0] == 0 &&
-             srcImg.at<Vec3b>(y+1,x)[1] == 0 &&
-             srcImg.at<Vec3b>(y+1,x)[2] == 0) ||
-            (srcImg.at<Vec3b>(y,x-1)[0] == 0 &&
-            srcImg.at<Vec3b>(y,x-1)[1] == 0 &&
-            srcImg.at<Vec3b>(y,x-1)[2] == 0) ||
-            (srcImg.at<Vec3b>(y,x+1)[0] == 0 &&
-             srcImg.at<Vec3b>(y,x+1)[1] == 0 &&
-             srcImg.at<Vec3b>(y,x+1)[2] == 0))
-    {
-        return true;
-    }
-    else
-    {
-        return false;
-    }
-
-}
 
 void MainWindow::Kmeans()
 {
@@ -929,3 +842,11 @@ void MainWindow::on_grayScaleCheckBox_clicked()
     ChangeColorSystemRGBtoAnother(lastColorSystem, EnumStrings[lastColorSystem]);
     ui->tabWidget->setCurrentIndex(currentIndex);
 }
+
+void MainWindow::Classification()
+{
+    SVMclassifier svm(seedVect);
+    svm.FillTrainingMat();
+}
+
+

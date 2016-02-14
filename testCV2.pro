@@ -21,7 +21,9 @@ SOURCES += main.cpp\
     ImageConverter.cpp \
     ColorSystemConverter.cpp \
     MorphologyOperation.cpp \
-    ImageLabelForm.cpp
+    ImageLabelForm.cpp \
+    SVMclassifier.cpp \
+    FeaturesCaculation.cpp
 
 HEADERS  += mainwindow.h \
     custspinbox.h \
@@ -29,7 +31,9 @@ HEADERS  += mainwindow.h \
     ImageConverter.h \
     ColorSystemConverter.h \
     MorphologyOperation.h \
-    ImageLabelForm.h
+    ImageLabelForm.h \
+    SVMclassifier.h \
+    FeaturesCaculation.h
 
 FORMS    += mainwindow.ui \
     ImageLabelForm.ui
@@ -42,6 +46,7 @@ LIBS += -lopencv_highgui \
         -lopencv_core \
         -lopencv_video \
         -lopencv_imgproc \
+        -lopencv_ml \
 
 
 

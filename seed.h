@@ -3,13 +3,18 @@
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
+
 using namespace cv;
 
 class Seed
 {
+
+
 public:
     Seed();
     ~Seed();
+
+
 
 //    void SetLevel(int level);
     //int GetLevel();
@@ -23,6 +28,13 @@ public:
     double GetCompactness();
     void SetCluster(int clust);
     int GetCluster();
+//    void SetCountOfFeatures(int countOfFeatures);
+    int GetCountOfFeatures();
+
+    void SetLuma(int luma);
+    int GetLuma();
+    void SetCountOfPixels(int countOfPixels);
+    int GetCountOfPixels();
 private:
 
     Scalar color;
@@ -30,6 +42,9 @@ private:
     int perimetr;
     double compactness;
     int cluster;
+    int countOfFeatures;
+    int luma;
+    int countOfPixels;
 };
 
 #endif // SEED_H

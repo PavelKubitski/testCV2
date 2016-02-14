@@ -11,6 +11,8 @@
 #include "QStandardItemModel"
 #include <ColorSystemConverter.h>
 #include <MorphologyOperation.h>
+#include <SVMclassifier.h>
+#include <FeaturesCaculation.h>
 
 namespace Ui {
 class MainWindow;
@@ -28,6 +30,7 @@ class MainWindow : public QMainWindow
     int currentIndex;
     Mat matsrc;
     Mat duplicateMatSrc;
+    Mat firstImage;
     Ui::MainWindow *ui;
     QStack<Mat> imgStack;
     QVector<Seed> seedVect;
@@ -63,7 +66,7 @@ public slots:
     void ChangeColorSystemRGBtoHLS();
     void ChangeColorSystemRGBtoLab();
     void MorphologySkeleton();
-
+    void Classification();
 
 
 private slots:
@@ -85,9 +88,7 @@ private:
     void rgb2cmyk(cv::Mat& img, std::vector<cv::Mat>& cmyk);
 
 
-    void calculateArea(Mat srcImg);
-    void calculatePerimetr(Mat srcImg);
-    void calculateCompactness();
+
     bool HaveBlackNeighbors(Mat srcImg, int x, int y);
     Scalar getColor(int cluster);
     void showClusters(Mat srcImg);

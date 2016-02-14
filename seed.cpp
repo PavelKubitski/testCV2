@@ -7,6 +7,9 @@ Seed::Seed()
     this->perimetr = 0;
     this->compactness = 0;
     this->cluster = -1;
+    this->countOfFeatures = 3;
+    this->luma = 0;
+    this->countOfPixels = 0;
 }
 
 Seed::~Seed()
@@ -77,4 +80,28 @@ int Seed::GetCluster()
     return cluster;
 }
 
+int Seed::GetCountOfFeatures()
+{
+    return countOfFeatures;
+}
 
+void Seed::SetLuma(int luma)
+{
+    this->luma = luma;
+}
+
+int Seed::GetLuma()
+{
+    return luma;
+}
+
+
+void Seed::SetCountOfPixels(int countOfPixels)
+{
+    this->countOfPixels = countOfPixels;
+}
+
+int Seed::GetCountOfPixels()
+{
+    return countOfPixels;
+}
