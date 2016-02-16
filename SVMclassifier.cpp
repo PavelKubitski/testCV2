@@ -26,7 +26,8 @@ void SVMclassifier::FillTrainingMat()
     // Set up training data
     float labels[4] = {1.0, 1.0, -1.0, -1.0};
     Mat labelsMat(4, 1, CV_32FC1, labels);
-// area, compactness, perimetr, luma
+
+// area, compactness, perimetr, luma, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION
 //    float trainingData[4][3] = {{4000, 9, 204}, {4300, 10, 210}, {8000, 16, 350}, {8500, 17, 320}};//beans
 //    float trainingData[4][3] = {{1500, 9, 120, 110}, {1700, 10, 130, 120}, {250, 10, 50,}, {300, 12, 66}};//bob and rice
 //    float trainingData[4][4] = {{1700, 9, 130, 110}, {1430, 10, 130, 120}, {1800, 11, 143, 24}, {1761, 11, 141, 42}};//sds
@@ -69,6 +70,19 @@ void SVMclassifier::fillObject(float *arr, int numberOfSeed)
         arr[l++] = seedVect[numberOfSeed].GetPerimetr();
     if((featVect.indexOf(LUMA)) != -1)
         arr[l++] = seedVect[numberOfSeed].GetLuma();
+    if((featVect.indexOf(CONTRAST)) != -1)
+        arr[l++] = seedVect[numberOfSeed].contrast;
+    if((featVect.indexOf(HOMOGENEITY)) != -1)
+        arr[l++] = seedVect[numberOfSeed].homogeneity;
+    if((featVect.indexOf(DISSIMILARITY)) != -1)
+        arr[l++] = seedVect[numberOfSeed].dissimilarity;
+    if((featVect.indexOf(ENERGY)) != -1)
+        arr[l++] = seedVect[numberOfSeed].energy;
+    if((featVect.indexOf(ENTROPY)) != -1)
+        arr[l++] = seedVect[numberOfSeed].entropy;
+    if((featVect.indexOf(CORRELATION)) != -1)
+        arr[l++] = seedVect[numberOfSeed].correlation;
+
 }
 
 

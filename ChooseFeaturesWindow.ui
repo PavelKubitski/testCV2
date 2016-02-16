@@ -13,49 +13,10 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QCheckBox" name="areaCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>30</y>
-     <width>89</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Area</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="perimetrCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>60</y>
-     <width>89</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Perimetr</string>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="compactnessCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>90</y>
-     <width>111</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Compactness</string>
-   </property>
-  </widget>
   <widget class="QCheckBox" name="lumaCheckBox">
    <property name="geometry">
     <rect>
-     <x>130</x>
+     <x>150</x>
      <y>30</y>
      <width>89</width>
      <height>20</height>
@@ -77,6 +38,149 @@
    <property name="text">
     <string>Ok</string>
    </property>
+  </widget>
+  <widget class="QGroupBox" name="groupBox">
+   <property name="geometry">
+    <rect>
+     <x>250</x>
+     <y>10</y>
+     <width>120</width>
+     <height>141</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Texture features</string>
+   </property>
+   <widget class="QCheckBox" name="dissimilarityCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>120</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dissimilarity</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="energyCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>60</y>
+      <width>101</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Energy</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="contrastCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Contrast</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="correlationCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>100</y>
+      <width>91</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Correlation</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="homogeneityCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Homogeneity</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="entropyCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>80</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Entropy</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>120</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Geometric features</string>
+   </property>
+   <widget class="QCheckBox" name="compactnessCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>60</y>
+      <width>111</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Compactness</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="areaCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Area</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="perimetrCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Perimetr</string>
+    </property>
+   </widget>
   </widget>
  </widget>
  <resources/>

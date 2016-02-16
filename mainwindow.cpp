@@ -641,17 +641,23 @@ void MainWindow::CalculateFeatures(Mat drawing)
     }
     if(featuresWindow->lumaBoxChecked())
         calculator.calculateLumaParametre(firstImage);
-
-    calculator.calculateContrast();
-    calculator.calculateHomogeneity();
-    calculator.calculateDissimilarity();
-    calculator.calculateCorrelation();
-    calculator.calculateEntropy();
+    if(featuresWindow->contrastBoxChecked())
+        calculator.calculateContrast();
+    if(featuresWindow->homogeneityBoxChecked())
+        calculator.calculateHomogeneity();
+    if(featuresWindow->dissimilarityBoxChecked())
+        calculator.calculateDissimilarity();
+    if(featuresWindow->correlationBoxChecked())
+        calculator.calculateCorrelation();
+    if(featuresWindow->entropyBoxChecked())
+        calculator.calculateEntropy();
+    if(featuresWindow->energyBoxChecked())
+        calculator.calculateEnergy();
 
     seedVect = calculator.GetSeedVector();
 
-    for(int i =0; i<seedVect.length(); i++)
-        printf("%f\n", seedVect[i].entropy);
+//    for(int i =0; i<seedVect.length(); i++)
+//        printf("%f\n", seedVect[i].entropy);
 }
 
 

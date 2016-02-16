@@ -36,16 +36,62 @@ bool ChooseFeaturesWindow::lumaBoxChecked()
     return ui->lumaCheckBox->isChecked();
 }
 
+bool ChooseFeaturesWindow::contrastBoxChecked()
+{
+    return ui->contrastCheckBox->isChecked();
+}
+
+bool ChooseFeaturesWindow::homogeneityBoxChecked()
+{
+    return ui->homogeneityCheckBox->isChecked();
+}
+
+bool ChooseFeaturesWindow::dissimilarityBoxChecked()
+{
+    return ui->dissimilarityCheckBox->isChecked();
+}
+
+bool ChooseFeaturesWindow::energyBoxChecked()
+{
+    return ui->energyCheckBox->isChecked();
+}
+
+bool ChooseFeaturesWindow::entropyBoxChecked()
+{
+    return ui->entropyCheckBox->isChecked();
+}
+
+bool ChooseFeaturesWindow::correlationBoxChecked()
+{
+    return ui->correlationCheckBox->isChecked();
+}
+
+
+
+
 
 void ChooseFeaturesWindow::on_okButton_clicked()
 {
     if (ui->areaCheckBox->isChecked())
         features.push_back(AREA);
-    if (ui->compactnessCheckBox->isChecked())
-        features.push_back(COMPACTNESS);
     if (ui->perimetrCheckBox->isChecked())
         features.push_back(PERIMETR);
+    if (ui->compactnessCheckBox->isChecked())
+        features.push_back(COMPACTNESS);
     if (ui->lumaCheckBox->isChecked())
         features.push_back(LUMA);
+    if (ui->contrastCheckBox->isChecked())
+        features.push_back(CONTRAST);
+    if (ui->homogeneityCheckBox->isChecked())
+        features.push_back(HOMOGENEITY);
+    if (ui->dissimilarityCheckBox->isChecked())
+        features.push_back(DISSIMILARITY);
+    if (ui->energyCheckBox->isChecked())
+        features.push_back(ENERGY);
+    if (ui->entropyCheckBox->isChecked())
+        features.push_back(ENTROPY);
+    if (ui->correlationCheckBox->isChecked())
+        features.push_back(CORRELATION);
+
     this->hide();
 }
