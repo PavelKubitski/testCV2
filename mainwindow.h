@@ -13,6 +13,7 @@
 #include <MorphologyOperation.h>
 #include <SVMclassifier.h>
 #include <FeaturesCaculation.h>
+#include <ChooseFeaturesWindow.h>
 
 namespace Ui {
 class MainWindow;
@@ -23,7 +24,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
     enum ColorSystem { NONE, CMYK, HSV, HLS, LAB };
-    vector<Mat> CSvector;     //CS- color system
+    vector<Mat> CSvector;     //CS - color system
     vector<Mat> CSvectorColored;
 
     ColorSystem lastColorSystem;
@@ -37,13 +38,12 @@ class MainWindow : public QMainWindow
 
     bool binarizated;
 
+    ChooseFeaturesWindow *featuresWindow;
+
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-
-
-
-
+    void CalculateFeatures(Mat drawing);
 
 public slots:
     void OpenPicture();
@@ -71,6 +71,7 @@ public slots:
 
 private slots:
     void on_grayScaleCheckBox_clicked();
+    void on_featuresButton_clicked();
 
 private:
 

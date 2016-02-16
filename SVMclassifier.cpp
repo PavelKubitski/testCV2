@@ -10,11 +10,14 @@ SVMclassifier::~SVMclassifier()
 
 }
 
-SVMclassifier::SVMclassifier(QVector<Seed> seedVector) : QObject(0)
+SVMclassifier::SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector) : QObject(0)
 {
     seedVect = QVector<Seed>(seedVector);
+    featVect = QVector<int>(featVector);
 //    training_mat(seedVect.size(),seedVect[0].GetCountOfFeatures(), CV_32FC1);
-    training_mat = Mat(4, 2, CV_32FC1);
+//    training_mat = Mat(4, 2, CV_32FC1);
+
+
 }
 
 void SVMclassifier::FillTrainingMat()
@@ -23,7 +26,7 @@ void SVMclassifier::FillTrainingMat()
     // Set up training data
     float labels[4] = {1.0, 1.0, -1.0, -1.0};
     Mat labelsMat(4, 1, CV_32FC1, labels);
-
+// area, compactness, perimetr, luma
 //    float trainingData[4][3] = {{4000, 9, 204}, {4300, 10, 210}, {8000, 16, 350}, {8500, 17, 320}};//beans
 //    float trainingData[4][3] = {{1500, 9, 120, 110}, {1700, 10, 130, 120}, {250, 10, 50,}, {300, 12, 66}};//bob and rice
 //    float trainingData[4][4] = {{1700, 9, 130, 110}, {1430, 10, 130, 120}, {1800, 11, 143, 24}, {1761, 11, 141, 42}};//sds
@@ -40,39 +43,36 @@ void SVMclassifier::FillTrainingMat()
     CvSVM SVM;
     SVM.train(trainingDataMat, labelsMat, Mat(), Mat(), params);
 
-
-    float object[3];
+    int featureLength = featVect.length();
+    float object[featureLength];
 
     for(int i = 0; i < seedVect.length(); i++)
     {
-        float a = seedVect[i].GetArea();
-        float c = seedVect[i].GetCompactness();
-        float p = seedVect[i].GetPerimetr();
-        float l = seedVect[i].GetLuma();
-
-//        object[0] = a;
-        object[0] = c;
-        object[1] = p;
-        object[2] = l;
-        Mat objectMat(1, 3, CV_32FC1, object);
+        fillObject(object, i);
+        Mat objectMat(1, featureLength, CV_32FC1, object);
 
         float response = SVM.predict(objectMat);
 
-        printf("%f %f %f %f class %f\n", a, c, p, l, response);
+        printf("class %f\n", response);
     }
+}
 
+void SVMclassifier::fillObject(float *arr, int numberOfSeed)
+{
+    int l = 0;
 
-
-
+    if((featVect.indexOf(AREA)) != -1)
+        arr[l++] = seedVect[numberOfSeed].GetArea();
+    if((featVect.indexOf(COMPACTNESS)) != -1)
+        arr[l++] = seedVect[numberOfSeed].GetCompactness();
+    if((featVect.indexOf(PERIMETR)) != -1)
+        arr[l++] = seedVect[numberOfSeed].GetPerimetr();
+    if((featVect.indexOf(LUMA)) != -1)
+        arr[l++] = seedVect[numberOfSeed].GetLuma();
 }
 
 
 
 
 
-//float** SVMclassifier::CalculateTrainingData()
-//{
-//    float trainingData[4][3] = {{4000, 9, 204}, {4300, 10, 210}, {8000, 16, 350}, {8500, 17, 320}};
-//    return trainingData;
-//}
 

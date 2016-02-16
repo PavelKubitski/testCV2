@@ -56,7 +56,7 @@
    <widget class="QPushButton" name="allocateObjButton">
     <property name="geometry">
      <rect>
-      <x>580</x>
+      <x>490</x>
       <y>440</y>
       <width>113</width>
       <height>32</height>
@@ -271,10 +271,13 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>5</number>
+      <number>3</number>
      </property>
      <property name="maximum">
       <number>9</number>
+     </property>
+     <property name="singleStep">
+      <number>2</number>
      </property>
      <property name="value">
       <number>5</number>
@@ -290,13 +293,16 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>2</number>
+      <number>3</number>
      </property>
      <property name="maximum">
       <number>9</number>
      </property>
-     <property name="value">
+     <property name="singleStep">
       <number>2</number>
+     </property>
+     <property name="value">
+      <number>3</number>
      </property>
     </widget>
     <widget class="QPushButton" name="denyFilterButton">
@@ -342,6 +348,9 @@
      </property>
      <property name="singleStep">
       <number>2</number>
+     </property>
+     <property name="value">
+      <number>9</number>
      </property>
     </widget>
     <widget class="QPushButton" name="medianFilterButton">
@@ -407,13 +416,16 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>2</number>
+      <number>3</number>
      </property>
      <property name="maximum">
       <number>9</number>
      </property>
-     <property name="value">
+     <property name="singleStep">
       <number>2</number>
+     </property>
+     <property name="value">
+      <number>3</number>
      </property>
     </widget>
     <widget class="QPushButton" name="openingButton">
@@ -439,13 +451,16 @@
       </rect>
      </property>
      <property name="minimum">
-      <number>1</number>
+      <number>3</number>
      </property>
      <property name="maximum">
       <number>9</number>
      </property>
-     <property name="value">
+     <property name="singleStep">
       <number>2</number>
+     </property>
+     <property name="value">
+      <number>3</number>
      </property>
      <property name="displayIntegerBase">
       <number>10</number>
@@ -462,7 +477,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>GroupBox</string>
+     <string>Classification</string>
     </property>
     <widget class="QPushButton" name="kmeansButton">
      <property name="geometry">
@@ -481,7 +496,7 @@
      <property name="geometry">
       <rect>
        <x>110</x>
-       <y>20</y>
+       <y>25</y>
        <width>101</width>
        <height>16</height>
       </rect>
@@ -612,6 +627,19 @@
     </property>
     <property name="text">
      <string>Show in colors</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="featuresButton">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>440</y>
+      <width>115</width>
+      <height>32</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Features</string>
     </property>
    </widget>
   </widget>

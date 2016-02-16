@@ -607,14 +607,8 @@ void MainWindow::AllocateObjects()
 
             showOnSrcLabel(drawing);
 
-            FeaturesCalculation calculator(drawing, seedVect);
-            calculator.calculateArea();
-            calculator.calculatePerimetr();
-            calculator.calculateCompactness();
-            calculator.calculateLumaParametre(firstImage);
 
-            seedVect = calculator.GetSeedVector();
-
+            CalculateFeatures(drawing);
 
 
             matsrc = drawing.clone();
@@ -631,7 +625,34 @@ void MainWindow::AllocateObjects()
     }
 }
 
+void MainWindow::CalculateFeatures(Mat drawing)
+{
+    FeaturesCalculation calculator(drawing, seedVect, firstImage);
 
+    if(featuresWindow->areaBoxChecked() && !featuresWindow->compactnessBoxChecked())
+        calculator.calculateArea();
+    if(featuresWindow->perimetrBoxChecked() && !featuresWindow->compactnessBoxChecked())
+        calculator.calculatePerimetr();
+    if(featuresWindow->compactnessBoxChecked())
+    {
+        calculator.calculateArea();
+        calculator.calculatePerimetr();
+        calculator.calculateCompactness();
+    }
+    if(featuresWindow->lumaBoxChecked())
+        calculator.calculateLumaParametre(firstImage);
+
+    calculator.calculateContrast();
+    calculator.calculateHomogeneity();
+    calculator.calculateDissimilarity();
+    calculator.calculateCorrelation();
+    calculator.calculateEntropy();
+
+    seedVect = calculator.GetSeedVector();
+
+    for(int i =0; i<seedVect.length(); i++)
+        printf("%f\n", seedVect[i].entropy);
+}
 
 
 
@@ -845,8 +866,15 @@ void MainWindow::on_grayScaleCheckBox_clicked()
 
 void MainWindow::Classification()
 {
-    SVMclassifier svm(seedVect);
+    QVector<int> feat = featuresWindow->features;
+    SVMclassifier svm(seedVect, feat);
     svm.FillTrainingMat();
 }
 
 
+
+void MainWindow::on_featuresButton_clicked()
+{
+    featuresWindow = new ChooseFeaturesWindow();
+    featuresWindow->show();
+}

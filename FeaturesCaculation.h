@@ -5,7 +5,9 @@
 #include <opencv/highgui.h>
 #include <qvector.h>
 #include <seed.h>
-
+#include <opencv2/legacy/legacy.hpp>
+#include <qstring.h>
+#include <QtCore/qmath.h>
 using namespace cv;
 using namespace std;
 
@@ -13,9 +15,12 @@ using namespace std;
 class FeaturesCalculation
 {
     Mat srcImg;
+    Mat firstImg;
     QVector<Seed> seedVect;
+    enum PARAMETR { CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION };
+
 public:
-    FeaturesCalculation(Mat img, QVector<Seed> seedVector);
+    FeaturesCalculation(Mat img, QVector<Seed> seedVector, Mat first);
     ~FeaturesCalculation();
 
     void calculateArea();
@@ -24,6 +29,16 @@ public:
     bool HaveBlackNeighbors(int x, int y);
     QVector<Seed> GetSeedVector();
     void calculateLumaParametre(Mat srcImage);
+    void calculateTextureGLCM();
+    void createGLCM(int indexOfSeed);
+    void calculateContrast();
+    void calculateHomogeneity();
+    void calculateDissimilarity();
+    void calculateEnergy();
+    void calculateParametr(PARAMETR param);
+    void calculateEntropy();
+    void calculateCorrelation();
+    void calculateUandThigma(int index, float &U, float &thigmaSqr);
 };
 
 #endif // FEATURESCACULATION_H

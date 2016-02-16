@@ -13,7 +13,14 @@ class Seed
 public:
     Seed();
     ~Seed();
-
+    Mat GLCM;
+    int countOfPairs;
+    float contrast;
+    float homogeneity;
+    float dissimilarity;
+    float entropy;
+    float energy;
+    float correlation;
 
 
 //    void SetLevel(int level);
@@ -45,6 +52,8 @@ private:
     int countOfFeatures;
     int luma;
     int countOfPixels;
+
+
 };
 
 #endif // SEED_H

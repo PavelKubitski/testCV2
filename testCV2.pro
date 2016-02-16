@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     MorphologyOperation.cpp \
     ImageLabelForm.cpp \
     SVMclassifier.cpp \
-    FeaturesCaculation.cpp
+    FeaturesCaculation.cpp \
+    ChooseFeaturesWindow.cpp
 
 HEADERS  += mainwindow.h \
     custspinbox.h \
@@ -33,10 +34,12 @@ HEADERS  += mainwindow.h \
     MorphologyOperation.h \
     ImageLabelForm.h \
     SVMclassifier.h \
-    FeaturesCaculation.h
+    FeaturesCaculation.h \
+    ChooseFeaturesWindow.h
 
 FORMS    += mainwindow.ui \
-    ImageLabelForm.ui
+    ImageLabelForm.ui \
+    ChooseFeaturesWindow.ui
 
 INCLUDEPATH += /usr/local/include
 

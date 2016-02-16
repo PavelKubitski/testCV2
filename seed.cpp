@@ -10,6 +10,14 @@ Seed::Seed()
     this->countOfFeatures = 3;
     this->luma = 0;
     this->countOfPixels = 0;
+    GLCM = Mat::zeros(32, 32, CV_8UC1);
+    countOfPairs = 0;
+    contrast = 0;
+    homogeneity = 0;
+    dissimilarity = 0;
+    entropy = 0;
+    energy = 0;
+    correlation = 0;
 }
 
 Seed::~Seed()
