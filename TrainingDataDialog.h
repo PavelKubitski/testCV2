@@ -18,17 +18,22 @@ class TrainingDataDialog : public QDialog
     Q_OBJECT
     int countOfClusters;
     int countOfObjs;
+    int countOfObjsInGrBox;
     Mat srcImg;
     Mat allocObjMat;
+    QVector<QVector<int> > trainDataObjsVectrs;
 
 public:
     QVector<Seed> seedVect;
-    QVector<QPoint> trainDataDots;
+//    QVector<QVector<int> > trainDataObjsVectrs;
     explicit TrainingDataDialog(QVector<Seed> seedVector, int countOfClusters, Mat allocObjMat, Mat srcImg, QWidget *parent = 0);
     ~TrainingDataDialog();
     void colorOfСircuit(QPoint& pos);
 
     void fillLabels(int numberOfObject);
+    QVector<QVector<int> > getTrainDataObjsVectrs() const;
+
+
 public slots:
     void showMousePosition(QPoint& pos);
 
@@ -39,10 +44,16 @@ protected:
 private slots:
     void on_okButton_clicked();
 
+    void on_denyButton_clicked();
+
 private:
     Ui::TrainingDataDialog *ui;
-//    Scalar getColor(int cluster);
+
     void contourDetection(Scalar sc);
+
+    void showActiveGroupBox();
+signals:
+    void trainingDataReady();
 };
 
 #endif // TRAININGDATADIALOG_H

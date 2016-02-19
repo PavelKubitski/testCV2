@@ -1,22 +1,33 @@
 #include "TrainingDataDialog.h"
 #include "ui_TrainingDataDialog.h"
 
+
+QVector<QVector<int> > TrainingDataDialog::getTrainDataObjsVectrs() const
+{
+    return trainDataObjsVectrs;
+}
+
+
 TrainingDataDialog::TrainingDataDialog(QVector<Seed> seedVector, int countOfClusters, Mat allocObjMat, Mat srcImg, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::TrainingDataDialog)
 {
     ui->setupUi(this);
     connect(ui->matDisplayLabel, SIGNAL(sendMousePosition(QPoint&)), this, SLOT(showMousePosition(QPoint&)));
+
     seedVect = QVector<Seed>(seedVector);
     this->countOfClusters = countOfClusters;
     ui->Cluster3GroupBox->hide();
     ui->Cluster4GroupBox->hide();
     ui->Cluster5GroupBox->hide();
 
+    showActiveGroupBox();
+
+    trainDataObjsVectrs = QVector<QVector<int> >();
+
     this->allocObjMat = allocObjMat.clone();
     this->srcImg = srcImg.clone();
     countOfObjs = 0;
-    countOfThirds = 0;
     float cols = this->srcImg.cols;
     float rows = this->srcImg.rows;
     int width = ui->matDisplayLabel->width();
@@ -24,9 +35,26 @@ TrainingDataDialog::TrainingDataDialog(QVector<Seed> seedVector, int countOfClus
     int height = width / div;
     ui->matDisplayLabel->setFixedSize(width, height);
     showOnSrcLabel(this->srcImg);
+    countOfObjsInGrBox = 3;
 
-    printf("label x = %d, y = %d\n", ui->matDisplayLabel->width(), ui->matDisplayLabel->height());
-    printf("srcimg x = %d, y = %d", this->srcImg.cols, this->srcImg.rows);
+//    printf("label x = %d, y = %d\n", ui->matDisplayLabel->width(), ui->matDisplayLabel->height());
+//    printf("srcimg x = %d, y = %d", this->srcImg.cols, this->srcImg.rows);
+}
+
+void TrainingDataDialog::showActiveGroupBox()
+{
+    if(countOfClusters == 3)
+    {
+        ui->Cluster3GroupBox->setHidden(false);
+    }
+    if(countOfClusters == 4)
+    {
+        ui->Cluster4GroupBox->setHidden(false);
+    }
+    if(countOfClusters == 5)
+    {
+        ui->Cluster4GroupBox->setHidden(false);
+    }
 }
 
 TrainingDataDialog::~TrainingDataDialog()
@@ -42,23 +70,30 @@ void TrainingDataDialog::colorOfСircuit(QPoint &pos)
     float imgX = x/ui->matDisplayLabel->width();
     float imgY = y/ui->matDisplayLabel->height();
 
-     imgX = imgX * srcImg.cols;
-     imgY = imgY * srcImg.rows;
+    static QVector<int> trainObjForCluster;
+
+    imgX = imgX * srcImg.cols;
+    imgY = imgY * srcImg.rows;
 //    imshow("src", srcImg);
 //    imshow("all", allocObjMat);
     for(int i = 0; i < seedVect.length(); i++)
     {
-        int c1 = allocObjMat.at<Vec3b>(imgY, imgX)[0];
-        int c2 = allocObjMat.at<Vec3b>(imgY, imgX)[1];
-        int c3 = allocObjMat.at<Vec3b>(imgY, imgX)[2];
-        printf(" %d %d %d = ",c3,c2,c1);
-        printf("%f %f %f\n",seedVect[i].GetColor()[2],seedVect[i].GetColor()[1],seedVect[i].GetColor()[0]);
         if(     allocObjMat.at<Vec3b>(imgY, imgX)[0] == seedVect[i].GetColor().val[0] &&
                 allocObjMat.at<Vec3b>(imgY, imgX)[1] == seedVect[i].GetColor().val[1] &&
                 allocObjMat.at<Vec3b>(imgY, imgX)[2] == seedVect[i].GetColor().val[2])
         {
+            if(countOfObjs % countOfObjsInGrBox == 0)
+            {
+                trainObjForCluster = QVector<int>();
+            }
+            trainObjForCluster.push_back(i);
             fillLabels(i);
             contourDetection(seedVect[i].GetColor());
+
+            if(countOfObjs % countOfObjsInGrBox == 2)
+            {
+                trainDataObjsVectrs.push_back(trainObjForCluster);
+            }
             countOfObjs++;
             showOnSrcLabel(this->srcImg);
             break;
@@ -71,7 +106,7 @@ void TrainingDataDialog::contourDetection(Scalar sc)
 {
 
 
-    Scalar color = getColor( (countOfObjs - countOfObjs % 3) /3);
+    Scalar color = getColor( (countOfObjs - countOfObjs % countOfObjsInGrBox) / countOfObjsInGrBox);
     for( int y = 0; y < srcImg.rows; y++ )
     {
         for( int x = 0; x < srcImg.cols; x++ )
@@ -82,9 +117,9 @@ void TrainingDataDialog::contourDetection(Scalar sc)
             {
                 if(HaveBlackNeighbors(x, y))
                 {
-                    srcImg.at<Vec3b>(y, x)[0] = srcImg.at<Vec3b>(y, x+1)[0] = color.val[2];
-                    srcImg.at<Vec3b>(y, x)[1] = srcImg.at<Vec3b>(y, x+1)[1] = color.val[1];
-                    srcImg.at<Vec3b>(y, x)[2] = srcImg.at<Vec3b>(y, x+1)[2] = color.val[0];
+                    srcImg.at<Vec3b>(y, x)[0] = srcImg.at<Vec3b>(y, x+1)[0] = srcImg.at<Vec3b>(y, x+2)[0] = srcImg.at<Vec3b>(y, x+3)[0] = color.val[2];
+                    srcImg.at<Vec3b>(y, x)[1] = srcImg.at<Vec3b>(y, x+1)[1] = srcImg.at<Vec3b>(y, x+2)[1] = srcImg.at<Vec3b>(y, x+3)[1] = color.val[1];
+                    srcImg.at<Vec3b>(y, x)[2] = srcImg.at<Vec3b>(y, x+1)[2] = srcImg.at<Vec3b>(y, x+2)[2] = srcImg.at<Vec3b>(y, x+3)[2] = color.val[0];
                 }
             }
         }
@@ -103,6 +138,9 @@ void TrainingDataDialog::fillLabels(int numberOfObject)
         break;
     case 2:
         ui->label_3->setText(QString::number(numberOfObject));
+        break;
+    case 3:
+        ui->label_4->setText(QString::number(numberOfObject));
         break;
     case 4:
         ui->label_5->setText(QString::number(numberOfObject));
@@ -146,16 +184,13 @@ void TrainingDataDialog::fillLabels(int numberOfObject)
 
 void TrainingDataDialog::showMousePosition(QPoint &pos)
 {
-    colorOfСircuit(pos);
-//    ui->mouse_position_label->setText("x: " + QString::number(pos.x()) + "y: " + QString::number(pos.y()));
-    printf( QString::number(pos.x()).toStdString().c_str());
-    printf(" ");
-    printf( QString::number(pos.y()).toStdString().c_str());
-    printf("\n");
+    if(trainDataObjsVectrs.length() < countOfClusters)
+        colorOfСircuit(pos);
 }
 
 void TrainingDataDialog::on_okButton_clicked()
 {
+    emit trainingDataReady();
     this->close();
 }
 
@@ -209,3 +244,16 @@ bool TrainingDataDialog::HaveBlackNeighbors( int x, int y)
     }
 
 }
+
+void TrainingDataDialog::on_denyButton_clicked()
+{
+    this->trainDataObjsVectrs.clear();
+    emit trainingDataReady();
+    this->close();
+
+}
+
+
+
+
+

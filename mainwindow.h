@@ -69,7 +69,7 @@ public slots:
     void ChangeColorSystemRGBtoLab();
     void MorphologySkeleton();
     void ClassificationSVM();
-
+    void StartClassification();
 
 private slots:
     void on_grayScaleCheckBox_clicked();
@@ -95,6 +95,7 @@ private:
     bool HaveBlackNeighbors(Mat srcImg, int x, int y);
     Scalar getColor(int cluster);
     void showClusters(Mat srcImg);
+
 };
 
 #endif // MAINWINDOW_H

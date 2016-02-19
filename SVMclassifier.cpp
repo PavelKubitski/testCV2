@@ -10,28 +10,43 @@ SVMclassifier::~SVMclassifier()
 
 }
 
-SVMclassifier::SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters) : QObject(0)
+SVMclassifier::SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters, QVector<QVector<int> > trainDataObj) : QObject(0)
 {
     seedVect = QVector<Seed>(seedVector);
     featVect = QVector<int>(featVector);
-//    training_mat(seedVect.size(),seedVect[0].GetCountOfFeatures(), CV_32FC1);
-//    training_mat = Mat(4, 2, CV_32FC1);
+    trainigDataObjs = QVector<QVector<int> >(trainDataObj);
 }
 
 void SVMclassifier::FillTrainingMat()
 {
 
-    // Set up training data
-    float labels[4] = {1.0, 1.0, 2, 0};
-    Mat labelsMat(4, 1, CV_32FC1, labels);
-
 // AREA = 0, PERIMETR, COMPACTNESS, ELONGATION, LUMA, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION, MATEXPECT, DISPERTION
-//    float trainingData[4][3] = {{4000, 9, 204}, {4300, 10, 210}, {8000, 16, 350}, {8500, 17, 320}};//beans
-//    float trainingData[4][3] = {{1500, 9, 120, 110}, {1700, 10, 130, 120}, {250, 10, 50,}, {300, 12, 66}};//bob and rice
-//    float trainingData[4][4] = {{1700, 9, 130, 110}, {1430, 10, 130, 120}, {1800, 11, 143, 24}, {1761, 11, 141, 42}};//sds
-    float trainingData[4][3] = {{ 130, 9,  110}, { 130, 10,  120}, { 143, 11,  24}, { 141, 11, 42}};//sds  per, comp, luma
-    Mat trainingDataMat(4, 3, CV_32FC1, trainingData);
 
+    int indexOfObject = 0;
+    int countOfOb = trainigDataObjs.length()*trainigDataObjs[0].length();
+    float labels[countOfOb];
+
+    float trainingData[countOfOb][featVect.length()]; //= new float*[countOfOb];//[featVect.length()]
+    int k = 0;
+    for(int i = 0; i < trainigDataObjs.length(); i++)
+        for(int j = 0; j < trainigDataObjs[i].length(); j++)
+        {
+            labels[indexOfObject++] = i;
+            fillObject(trainingData[k++], trainigDataObjs[i][j]);
+        }
+
+
+    Mat labelsMat(countOfOb, 1, CV_32FC1, labels);
+
+    Mat trainingDataMat(countOfOb, featVect.length(), CV_32FC1, trainingData);
+    for(int i = 0; i < countOfOb; i++)
+    {
+        for(int j = 0; j < featVect.length(); j++)
+        {
+            std::cout << trainingData[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
     // Set up SVM's parameters
     CvSVMParams params;
     params.svm_type    = CvSVM::C_SVC;
@@ -49,12 +64,14 @@ void SVMclassifier::FillTrainingMat()
     {
         fillObject(object, i);
         Mat objectMat(1, featureLength, CV_32FC1, object);
-
-        seedVect[i].SetCluster(SVM.predict(objectMat));
-
-//        printf("class %f\n", response);
+        float cl = SVM.predict(objectMat);
+        seedVect[i].SetCluster(cl);
     }
 }
+
+
+
+
 
 void SVMclassifier::fillObject(float *arr, int numberOfSeed)
 {

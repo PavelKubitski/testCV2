@@ -302,6 +302,19 @@
     <string>Ok</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="denyButton">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>400</y>
+     <width>115</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Deny</string>
+   </property>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>

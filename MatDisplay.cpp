@@ -16,7 +16,7 @@ void matDisplay::mousePressEvent(QMouseEvent *mouse_event)
 {
     if(mouse_event->button() == Qt::LeftButton)
     {
-        printf("LeftButton\n");
+//        printf("LeftButton\n");
         QPoint mouse_pos = mouse_event->pos();
 
         if(mouse_pos.x() <= this->size().width() && mouse_pos.y() <= this->size().height())

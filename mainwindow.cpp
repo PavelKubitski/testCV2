@@ -14,9 +14,11 @@ MainWindow::MainWindow(QWidget *parent) :
     binarizated = false;
     ui->srcImageLabel->setStyleSheet("QLabel { background-color : white;}");
 
+//connecting to trainingDatawindow in ClassificationSVM
+
+    //ui signals
     connect(ui->openButton, SIGNAL(clicked()), this, SLOT(OpenPicture()));
     connect(ui->toGrayScaleButton, SIGNAL(clicked()), this, SLOT(ToGrayScale()));
-
     connect(ui->customContrSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ChangeContrast()));
     connect(ui->customSpinBox, SIGNAL(valueChanged(int)), this, SLOT(ChangeBrightness()));
     connect(ui->adaptiveThresButton, SIGNAL(clicked()), this, SLOT(AdaptiveThreshold()));
@@ -897,14 +899,29 @@ void MainWindow::ClassificationSVM()
 {
     trainingDataWindow = new TrainingDataDialog(seedVect, ui->clusterSpinBox->value(), matsrc, firstImage);
     trainingDataWindow->show();
-    QVector<int> feat = featuresWindow->features;
-    SVMclassifier svm(seedVect, feat, ui->clusterSpinBox->value());
-    svm.FillTrainingMat();
-    seedVect = svm.GetSeedVector();
-
-    showClusters(matsrc);
+    connect(trainingDataWindow, SIGNAL(trainingDataReady()), this, SLOT(StartClassification()));
 }
 
+void MainWindow::StartClassification()
+{
+
+    QVector<QVector<int> > trainingData = trainingDataWindow->getTrainDataObjsVectrs();
+    if(!trainingData.empty())
+    {
+        QVector<int> feat = featuresWindow->features;
+        SVMclassifier svm(seedVect, feat, ui->clusterSpinBox->value(), trainingData);
+        svm.FillTrainingMat();
+        seedVect = svm.GetSeedVector();
+
+        showClusters(matsrc);
+    } else {
+        QMessageBox::information(this, tr("Classification"), tr("Need training data, click on \"SVM\" button again"));
+    }
+    if(trainingData.length() < ui->clusterSpinBox->value())
+    {
+        QMessageBox::information(this, tr("Classification"), tr("Need more training data, click on \"SVM\" button again"));
+    }
+}
 
 
 void MainWindow::on_featuresButton_clicked()

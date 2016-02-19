@@ -12,6 +12,7 @@
 #include <seed.h>
 
 using namespace cv;
+using namespace std;
 
 //enum FEATURES { AREA = 0, PERIMETR, COMPACTNESS, LUMA };
 
@@ -23,11 +24,13 @@ class SVMclassifier : public QObject
     QVector<Seed> seedVect;
     cv::Mat training_mat;
     QVector<int> featVect;
+    QVector<QVector<int> > trainigDataObjs;
+
 
 public:
     explicit SVMclassifier(QObject *parent = 0);
     ~SVMclassifier();
-    SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters);
+    SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters, QVector<QVector<int> > trainDataObj);
     void FillTrainingMat();
     float** CalculateTrainingData();
     void fillObject(float *arr, int numberOfSeed);
@@ -40,6 +43,8 @@ signals:
 public slots:
 
 
+protected:
+//    void createTrainingDataArray(float trainArray[][featVect.length()]);
 };
 
 #endif // SVMCLASSIFIER_H
