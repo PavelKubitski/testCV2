@@ -38,7 +38,7 @@ void MorphologyOperation::findEdgeChains(Mat img)
 
 
     uniteEndPoinds(dst);
-    imshow("q", dst);
+//    imshow("q", dst);
 }
 
 int MorphologyOperation::pixelArea(Mat img, int i, int j)
@@ -80,7 +80,7 @@ void MorphologyOperation::grayPixelInArea(Mat img, int i, int j)
             }
         }
     }
-    imshow("endPoint1", img);
+//    imshow("endPoint1", img);
     int xLength = 0, yLength = 0;
     for(int k = 0; k < grayPoints.size(); k++)
     {
@@ -92,7 +92,7 @@ void MorphologyOperation::grayPixelInArea(Mat img, int i, int j)
     yLength /= grayPoints.size();
 
     img.at<uchar>(xLength, yLength) = 50;
-    imshow("endPoint2", img);
+//    imshow("endPoint2", img);
 
 
 }

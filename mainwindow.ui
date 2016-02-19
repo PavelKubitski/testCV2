@@ -393,7 +393,7 @@
  filter</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="circuitButton">
+    <widget class="QPushButton" name="closingButton">
      <property name="geometry">
       <rect>
        <x>90</x>
@@ -403,7 +403,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>Circuit</string>
+      <string>Closing</string>
      </property>
     </widget>
     <widget class="QSpinBox" name="circuitSpinBox">
@@ -489,7 +489,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>kmeans</string>
+      <string>SVM</string>
      </property>
     </widget>
     <widget class="QLabel" name="clusterNumberLabel">

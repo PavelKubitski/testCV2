@@ -3,13 +3,13 @@
 Seed::Seed()
 {
 //    this->level = 0;
-    this->area = 0;
-    this->perimetr = 0;
-    this->compactness = 0;
-    this->cluster = -1;
-    this->countOfFeatures = 3;
-    this->luma = 0;
-    this->countOfPixels = 0;
+    area = 0;
+    perimetr = 0;
+    compactness = 0;
+    cluster = -10;
+    countOfFeatures = 3;
+    luma = 0;
+    countOfPixels = 0;
     GLCM = Mat::zeros(32, 32, CV_8UC1);
     countOfPairs = 0;
     contrast = 0;
@@ -18,6 +18,17 @@ Seed::Seed()
     entropy = 0;
     energy = 0;
     correlation = 0;
+    countOfPixelsOnLevel = new int[256];
+    memset(countOfPixelsOnLevel, 0, 256*sizeof(int));
+    matExpect = 0;
+    dispersion = 0;
+    centerMass = Point(0,0);
+    elongation = 0;
+//    for(int i = 0; i < 256; i++)
+//    {
+//        printf("%d ", countOfPixelsOnLevel[i]);
+//    }
+//    printf("\n");
 }
 
 Seed::~Seed()

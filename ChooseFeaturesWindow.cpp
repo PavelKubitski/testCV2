@@ -66,6 +66,15 @@ bool ChooseFeaturesWindow::correlationBoxChecked()
     return ui->correlationCheckBox->isChecked();
 }
 
+bool ChooseFeaturesWindow::matExpectBoxChecked()
+{
+    return ui->matExtectCheckBox->isChecked();
+}
+
+bool ChooseFeaturesWindow::dispertionBoxChecked()
+{
+    return ui->dispertionCheckBox->isChecked();
+}
 
 
 
@@ -78,6 +87,8 @@ void ChooseFeaturesWindow::on_okButton_clicked()
         features.push_back(PERIMETR);
     if (ui->compactnessCheckBox->isChecked())
         features.push_back(COMPACTNESS);
+    if (ui->elongationCheckBox->isChecked())
+        features.push_back(ELONGATION);
     if (ui->lumaCheckBox->isChecked())
         features.push_back(LUMA);
     if (ui->contrastCheckBox->isChecked())
@@ -92,6 +103,11 @@ void ChooseFeaturesWindow::on_okButton_clicked()
         features.push_back(ENTROPY);
     if (ui->correlationCheckBox->isChecked())
         features.push_back(CORRELATION);
+    if (ui->matExtectCheckBox->isChecked())
+        features.push_back(MATEXPECT);
+    if (ui->dispertionCheckBox->isChecked())
+        features.push_back(DISPERTION);
+
 
     this->hide();
 }

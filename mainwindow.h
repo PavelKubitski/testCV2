@@ -14,6 +14,7 @@
 #include <SVMclassifier.h>
 #include <FeaturesCaculation.h>
 #include <ChooseFeaturesWindow.h>
+#include <TrainingDataDialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -39,6 +40,7 @@ class MainWindow : public QMainWindow
     bool binarizated;
 
     ChooseFeaturesWindow *featuresWindow;
+    TrainingDataDialog *trainingDataWindow;
 
 public:
     explicit MainWindow(QWidget *parent = 0);
@@ -66,7 +68,7 @@ public slots:
     void ChangeColorSystemRGBtoHLS();
     void ChangeColorSystemRGBtoLab();
     void MorphologySkeleton();
-    void Classification();
+    void ClassificationSVM();
 
 
 private slots:

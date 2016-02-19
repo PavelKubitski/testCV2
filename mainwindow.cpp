@@ -25,12 +25,12 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->minFilterButton, SIGNAL(clicked()), this, SLOT(ErodeFilter()));
     connect(ui->maxFilterButton, SIGNAL(clicked()), this, SLOT(DilatingFilter()));
     connect(ui->allocateObjButton, SIGNAL(clicked()), this, SLOT(AllocateObjects()));
-    connect(ui->kmeansButton, SIGNAL(clicked()), this , SLOT(Classification()));
+    connect(ui->kmeansButton, SIGNAL(clicked()), this , SLOT(ClassificationSVM()));
     connect(ui->CMYKButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoCMYK()));
     connect(ui->HSVButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHSV()));
     connect(ui->HLSButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHLS()));
     connect(ui->LABButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoLab()));
-    connect(ui->circuitButton, SIGNAL(clicked()), this, SLOT(CircuitFilter()));
+    connect(ui->closingButton, SIGNAL(clicked()), this, SLOT(CircuitFilter()));
     connect(ui->openingButton, SIGNAL(clicked()), this, SLOT(OpeningFilter()));
     connect(ui->otsuButton, SIGNAL(clicked()), this, SLOT(AdaptiveThresholdOtsu()));
     connect(ui->skeletonButton, SIGNAL(clicked()), this, SLOT(MorphologySkeleton()));
@@ -362,12 +362,12 @@ void MainWindow::MorphologySkeleton()
 
             DilatingFilter();
 
-            imshow("opening filter", matsrc);
+//            imshow("opening filter", matsrc);
 
             MorphologyOperation::findEdgeChains(matsrc);
 
             addWeighted( copyMat, 0.5, skel, 0.5, 0.0, matsrc);
-            imshow("2", matsrc);
+//            imshow("2", matsrc);
             duplicateMatSrc = matsrc.clone();
 
 //            showOnGrayLabel(duplicateMatSrc);
@@ -629,18 +629,19 @@ void MainWindow::CalculateFeatures(Mat drawing)
 {
     FeaturesCalculation calculator(drawing, seedVect, firstImage);
 
-    if(featuresWindow->areaBoxChecked() && !featuresWindow->compactnessBoxChecked())
-        calculator.calculateArea();
+//    if(featuresWindow->areaBoxChecked() && !featuresWindow->compactnessBoxChecked())
+    calculator.calculateArea();
+
     if(featuresWindow->perimetrBoxChecked() && !featuresWindow->compactnessBoxChecked())
         calculator.calculatePerimetr();
     if(featuresWindow->compactnessBoxChecked())
     {
-        calculator.calculateArea();
+//        calculator.calculateArea();
         calculator.calculatePerimetr();
         calculator.calculateCompactness();
     }
     if(featuresWindow->lumaBoxChecked())
-        calculator.calculateLumaParametre(firstImage);
+        calculator.calculateLumaParameter(firstImage);
     if(featuresWindow->contrastBoxChecked())
         calculator.calculateContrast();
     if(featuresWindow->homogeneityBoxChecked())
@@ -654,10 +655,29 @@ void MainWindow::CalculateFeatures(Mat drawing)
     if(featuresWindow->energyBoxChecked())
         calculator.calculateEnergy();
 
-    seedVect = calculator.GetSeedVector();
 
+    calculator.calculateMatExpectation();
+
+    if(featuresWindow->dispertionBoxChecked())
+        calculator.calculateDispertion();
+
+    calculator.calculateMassCenter();
+
+    if(featuresWindow->dispertionBoxChecked())
+        calculator.calculateElongation();
+
+
+
+    seedVect = calculator.GetSeedVector();
+//    for(int i = 0; i < 256; i++)
+//    {
+//        printf("%d ", seedVect[0].countOfPixelsOnLevel[i]);
+//    }
+
+//    for(int i = 0; i < seedVect.length(); i++)
+//        printf("%f\n", seedVect[i].elongation);
 //    for(int i =0; i<seedVect.length(); i++)
-//        printf("%f\n", seedVect[i].entropy);
+//        printf("x = %d y = %d\n", seedVect[i].centerMass.x, seedVect[i].centerMass.y);
 }
 
 
@@ -708,6 +728,7 @@ void MainWindow::Kmeans()
 
 }
 
+
 void MainWindow::showClusters(Mat srcImg)
 {
     int i;
@@ -739,10 +760,10 @@ void MainWindow::showClusters(Mat srcImg)
                 }
             }
        }
-    showOnSrcLabel(srcImg);
-//    showOnGrayLabel(srcImg);
-}
 
+    showOnSrcLabel(srcImg);
+
+}
 
 
 
@@ -773,7 +794,6 @@ void MainWindow::ShowKmeansStatistics()
     }
 }
 
-
 Scalar MainWindow::getColor(int cluster)
 {
     if(cluster == 0)
@@ -795,6 +815,7 @@ Scalar MainWindow::getColor(int cluster)
 }
 
 
+
 void MainWindow::ChangeColorSystemRGBtoCMYK()
 {
     ChangeColorSystemRGBtoAnother(CMYK ,"CMYK");
@@ -814,6 +835,7 @@ void MainWindow::ChangeColorSystemRGBtoLab()
 {
     ChangeColorSystemRGBtoAnother(LAB , "LAB");
 }
+
 
 void MainWindow::ChangeColorSystemRGBtoAnother(ColorSystem cs, QString systemName)
 {
@@ -853,6 +875,7 @@ void MainWindow::ChangeColorSystemRGBtoAnother(ColorSystem cs, QString systemNam
 
 }
 
+
 void MainWindow::DeleteAllTabs()
 {
     while (ui->tabWidget->count() != 0)
@@ -870,11 +893,16 @@ void MainWindow::on_grayScaleCheckBox_clicked()
     ui->tabWidget->setCurrentIndex(currentIndex);
 }
 
-void MainWindow::Classification()
+void MainWindow::ClassificationSVM()
 {
+    trainingDataWindow = new TrainingDataDialog(seedVect, ui->clusterSpinBox->value(), matsrc, firstImage);
+    trainingDataWindow->show();
     QVector<int> feat = featuresWindow->features;
-    SVMclassifier svm(seedVect, feat);
+    SVMclassifier svm(seedVect, feat, ui->clusterSpinBox->value());
     svm.FillTrainingMat();
+    seedVect = svm.GetSeedVector();
+
+    showClusters(matsrc);
 }
 
 

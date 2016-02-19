@@ -10,28 +10,26 @@ SVMclassifier::~SVMclassifier()
 
 }
 
-SVMclassifier::SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector) : QObject(0)
+SVMclassifier::SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters) : QObject(0)
 {
     seedVect = QVector<Seed>(seedVector);
     featVect = QVector<int>(featVector);
 //    training_mat(seedVect.size(),seedVect[0].GetCountOfFeatures(), CV_32FC1);
 //    training_mat = Mat(4, 2, CV_32FC1);
-
-
 }
 
 void SVMclassifier::FillTrainingMat()
 {
 
     // Set up training data
-    float labels[4] = {1.0, 1.0, -1.0, -1.0};
+    float labels[4] = {1.0, 1.0, 2, 0};
     Mat labelsMat(4, 1, CV_32FC1, labels);
 
-// area, compactness, perimetr, luma, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION
+// AREA = 0, PERIMETR, COMPACTNESS, ELONGATION, LUMA, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION, MATEXPECT, DISPERTION
 //    float trainingData[4][3] = {{4000, 9, 204}, {4300, 10, 210}, {8000, 16, 350}, {8500, 17, 320}};//beans
 //    float trainingData[4][3] = {{1500, 9, 120, 110}, {1700, 10, 130, 120}, {250, 10, 50,}, {300, 12, 66}};//bob and rice
 //    float trainingData[4][4] = {{1700, 9, 130, 110}, {1430, 10, 130, 120}, {1800, 11, 143, 24}, {1761, 11, 141, 42}};//sds
-    float trainingData[4][3] = {{ 9, 130, 110}, { 10, 130, 120}, { 11, 143, 24}, { 11, 141, 42}};//sds
+    float trainingData[4][3] = {{ 130, 9,  110}, { 130, 10,  120}, { 143, 11,  24}, { 141, 11, 42}};//sds  per, comp, luma
     Mat trainingDataMat(4, 3, CV_32FC1, trainingData);
 
     // Set up SVM's parameters
@@ -52,9 +50,9 @@ void SVMclassifier::FillTrainingMat()
         fillObject(object, i);
         Mat objectMat(1, featureLength, CV_32FC1, object);
 
-        float response = SVM.predict(objectMat);
+        seedVect[i].SetCluster(SVM.predict(objectMat));
 
-        printf("class %f\n", response);
+//        printf("class %f\n", response);
     }
 }
 
@@ -68,6 +66,8 @@ void SVMclassifier::fillObject(float *arr, int numberOfSeed)
         arr[l++] = seedVect[numberOfSeed].GetCompactness();
     if((featVect.indexOf(PERIMETR)) != -1)
         arr[l++] = seedVect[numberOfSeed].GetPerimetr();
+    if((featVect.indexOf(ELONGATION)) != -1)
+        arr[l++] = seedVect[numberOfSeed].elongation;
     if((featVect.indexOf(LUMA)) != -1)
         arr[l++] = seedVect[numberOfSeed].GetLuma();
     if((featVect.indexOf(CONTRAST)) != -1)
@@ -82,10 +82,18 @@ void SVMclassifier::fillObject(float *arr, int numberOfSeed)
         arr[l++] = seedVect[numberOfSeed].entropy;
     if((featVect.indexOf(CORRELATION)) != -1)
         arr[l++] = seedVect[numberOfSeed].correlation;
+    if((featVect.indexOf(MATEXPECT)) != -1)
+        arr[l++] = seedVect[numberOfSeed].matExpect;
+    if((featVect.indexOf(DISPERTION)) != -1)
+        arr[l++] = seedVect[numberOfSeed].dispersion;
+
 
 }
 
-
+QVector<Seed> SVMclassifier::GetSeedVector()
+{
+    return seedVect;
+}
 
 
 

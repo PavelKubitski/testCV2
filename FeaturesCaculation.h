@@ -28,17 +28,21 @@ public:
     void calculateCompactness();
     bool HaveBlackNeighbors(int x, int y);
     QVector<Seed> GetSeedVector();
-    void calculateLumaParametre(Mat srcImage);
+    void calculateLumaParameter(Mat srcImage);
     void calculateTextureGLCM();
     void createGLCM(int indexOfSeed);
     void calculateContrast();
     void calculateHomogeneity();
     void calculateDissimilarity();
     void calculateEnergy();
-    void calculateParametr(PARAMETR param);
+    void calculateParameter(PARAMETR param);
     void calculateEntropy();
     void calculateCorrelation();
     void calculateUandThigma(int index, float &U, float &thigmaSqr);
+    void calculateMatExpectation();
+    void calculateDispertion();
+    void calculateMassCenter();
+    void calculateElongation();
 };
 
 #endif // FEATURESCACULATION_H

@@ -3,7 +3,7 @@
 
 #include <QDialog>
 
-enum FEATURES { AREA = 0, PERIMETR, COMPACTNESS, LUMA, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION };
+enum FEATURES { AREA = 0, PERIMETR, COMPACTNESS, ELONGATION, LUMA, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION, MATEXPECT, DISPERTION };
 
 namespace Ui {
 class ChooseFeaturesWindow;
@@ -32,6 +32,8 @@ public:
     bool energyBoxChecked();
     bool entropyBoxChecked();
     bool correlationBoxChecked();
+    bool dispertionBoxChecked();
+    bool matExpectBoxChecked();
 private slots:
     void on_okButton_clicked();
 

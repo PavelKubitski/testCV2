@@ -9,6 +9,7 @@
 #include <opencv/highgui.h>
 #include <opencv2/ml/ml.hpp>
 #include <ChooseFeaturesWindow.h>
+#include <seed.h>
 
 using namespace cv;
 
@@ -26,10 +27,12 @@ class SVMclassifier : public QObject
 public:
     explicit SVMclassifier(QObject *parent = 0);
     ~SVMclassifier();
-    SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector);
+    SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters);
     void FillTrainingMat();
     float** CalculateTrainingData();
     void fillObject(float *arr, int numberOfSeed);
+    QVector<Seed> GetSeedVector();
+
 signals:
 
 

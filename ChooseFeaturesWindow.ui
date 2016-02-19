@@ -13,19 +13,6 @@
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
-  <widget class="QCheckBox" name="lumaCheckBox">
-   <property name="geometry">
-    <rect>
-     <x>150</x>
-     <y>30</y>
-     <width>89</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Luma</string>
-   </property>
-  </widget>
   <widget class="QPushButton" name="okButton">
    <property name="geometry">
     <rect>
@@ -42,7 +29,7 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>250</x>
+     <x>270</x>
      <y>10</y>
      <width>120</width>
      <height>141</height>
@@ -136,7 +123,7 @@
      <x>10</x>
      <y>10</y>
      <width>120</width>
-     <height>81</height>
+     <height>101</height>
     </rect>
    </property>
    <property name="title">
@@ -153,6 +140,9 @@
     </property>
     <property name="text">
      <string>Compactness</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="areaCheckBox">
@@ -179,6 +169,80 @@
     </property>
     <property name="text">
      <string>Perimetr</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="elongationCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>80</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Elongation</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QGroupBox" name="groupBox_3">
+   <property name="geometry">
+    <rect>
+     <x>140</x>
+     <y>10</y>
+     <width>120</width>
+     <height>81</height>
+    </rect>
+   </property>
+   <property name="title">
+    <string>Luma features</string>
+   </property>
+   <widget class="QCheckBox" name="dispertionCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>60</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Dispertion</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="matExtectCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>40</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>MatExpect</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="lumaCheckBox">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Luma</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
     </property>
    </widget>
   </widget>

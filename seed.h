@@ -21,6 +21,11 @@ public:
     float entropy;
     float energy;
     float correlation;
+    int *countOfPixelsOnLevel;
+    float matExpect;
+    float dispersion;
+    Point centerMass;
+    double elongation;
 
 
 //    void SetLevel(int level);

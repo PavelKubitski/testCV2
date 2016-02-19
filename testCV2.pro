@@ -24,7 +24,9 @@ SOURCES += main.cpp\
     ImageLabelForm.cpp \
     SVMclassifier.cpp \
     FeaturesCaculation.cpp \
-    ChooseFeaturesWindow.cpp
+    ChooseFeaturesWindow.cpp \
+    TrainingDataDialog.cpp \
+    MatDisplay.cpp
 
 HEADERS  += mainwindow.h \
     custspinbox.h \
@@ -35,11 +37,14 @@ HEADERS  += mainwindow.h \
     ImageLabelForm.h \
     SVMclassifier.h \
     FeaturesCaculation.h \
-    ChooseFeaturesWindow.h
+    ChooseFeaturesWindow.h \
+    TrainingDataDialog.h \
+    MatDisplay.h
 
 FORMS    += mainwindow.ui \
     ImageLabelForm.ui \
-    ChooseFeaturesWindow.ui
+    ChooseFeaturesWindow.ui \
+    TrainingDataDialog.ui
 
 INCLUDEPATH += /usr/local/include
 
