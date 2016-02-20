@@ -17,7 +17,7 @@ class FeaturesCalculation
     Mat srcImg;
     Mat firstImg;
     QVector<Seed> seedVect;
-    enum PARAMETR { CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION };
+    enum PARAMETR { AREA, LUMA, MATEXP, MASSCENTRE, ELONGATION, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION };
 
 public:
     FeaturesCalculation(Mat img, QVector<Seed> seedVector, Mat first);
@@ -35,7 +35,7 @@ public:
     void calculateHomogeneity();
     void calculateDissimilarity();
     void calculateEnergy();
-    void calculateParameter(PARAMETR param);
+    void calculateTextureParameter(PARAMETR param);
     void calculateEntropy();
     void calculateCorrelation();
     void calculateUandThigma(int index, float &U, float &thigmaSqr);
@@ -43,6 +43,7 @@ public:
     void calculateDispertion();
     void calculateMassCenter();
     void calculateElongation();
+    void calculateSomeGeometryParam(PARAMETR param);
 };
 
 #endif // FEATURESCACULATION_H

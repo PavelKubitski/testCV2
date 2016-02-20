@@ -12,11 +12,29 @@ FeaturesCalculation::FeaturesCalculation(Mat img, QVector<Seed> seedVector, Mat 
 FeaturesCalculation::~FeaturesCalculation()
 {
 
-}
 
-void FeaturesCalculation::calculateArea()
+}
+//enum PARAMETR { AREA, LUMA, MATEXP, MASSCENTRE, ELLONGATION, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION };
+
+void FeaturesCalculation::calculateSomeGeometryParam(PARAMETR param)
 {
-    int oldArea, i;
+    int i = 0, oldArea, oldLuma,  oldPixel;
+    int len = seedVect.length();
+    Mat channel[3], YCRImage;
+    cvtColor(firstImg, YCRImage, COLOR_BGR2YCrCb);
+    split(YCRImage, channel);
+
+    double *m11 = new double[len];
+    double *m02 = new double[len];
+    double *m20 = new double[len];
+
+    for(int i =0; i < len; i++)
+    {
+        m11[i] = 0;
+        m02[i] = 0;
+        m20[i] = 0;
+    }
+
 
     for( int y = 0; y < srcImg.rows; y++ )
        {
@@ -34,17 +52,89 @@ void FeaturesCalculation::calculateArea()
                            s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
                            s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
                         {
-
-                            oldArea = s.GetArea();
-                            seedVect[i].SetArea(oldArea+1);
-                            break;
+                            if(param == AREA)
+                            {
+                                oldArea = s.GetArea();
+                                seedVect[i].SetArea(oldArea+1);
+                                break;
+                            }
+                            if(param == LUMA)
+                            {
+                                oldLuma = s.GetLuma();
+                                int l = channel[0].at<uchar>(y, x);
+                                seedVect[i].SetLuma(oldLuma + l);
+                                oldPixel = s.GetCountOfPixels();
+                                seedVect[i].SetCountOfPixels(oldPixel+1);
+                                break;
+                            }
+                            if(param == MATEXP)
+                            {
+                                seedVect[i].countOfPixelsOnLevel[channel[0].at<uchar>(y,x)]++;
+                            }
+                            if(param == MASSCENTRE)
+                            {
+                                seedVect[i].centerMass.x += x ;
+                                seedVect[i].centerMass.y += y ;
+                            }
+                            if(param == ELONGATION)
+                            {
+                                m11[i] += (x - seedVect[i].centerMass.x)*(y - seedVect[i].centerMass.y);
+                                m02[i] += qPow((y - seedVect[i].centerMass.y), 2);
+                                m20[i] += qPow((x - seedVect[i].centerMass.x), 2);
+                            }
                         }
                         i++;
                     }
                 }
             }
        }
+    if(param == LUMA)
+    {
+        float luma = 0;
+        for(int k = 0; k < seedVect.length(); k++)
+        {
+            luma = seedVect[k].GetLuma() / seedVect[k].GetCountOfPixels();
+            seedVect[k].SetLuma(luma);
+            luma = 0;
+        }
+    }
+    if(param == MATEXP)
+    {
+        for(int index = 0; index < seedVect.length(); index++)
+        {
+            for(int k = 0; k < 256; k++)
+            {
+                seedVect[index].matExpect += k * seedVect[index].countOfPixelsOnLevel[k] / seedVect[index].GetArea();
+            }
+        }
+    }
+    if(param == MASSCENTRE)
+    {
+        for(int index = 0; index < seedVect.length(); index++)
+        {
+            seedVect[index].centerMass.x /= seedVect[index].GetArea();
+            seedVect[index].centerMass.y /= seedVect[index].GetArea();
+        }
+    }
+    if(param == ELONGATION)
+    {
+        double m1=0, m2=0;
+        for(int index = 0; index < seedVect.length(); index++)
+        {
+            m1 = (m20[index] + m02[index] + qSqrt((m20[index] - m02[index])*(m20[index] - m02[index]) + 4*m11[index]*m11[index]));
+            m2 = (m20[index] + m02[index] - qSqrt((m20[index] - m02[index])*(m20[index] - m02[index]) + 4*m11[index]*m11[index]));
+            cout << "m1 = " << m1 << "m2 = " << m2 << "\n";
+            seedVect[index].elongation = m1 / m2;
+        }
+    }
+
 }
+
+void FeaturesCalculation::calculateArea()
+{
+    calculateSomeGeometryParam(AREA);
+}
+
 
 void FeaturesCalculation::calculatePerimetr()
 {
@@ -125,114 +215,13 @@ QVector<Seed> FeaturesCalculation::GetSeedVector()
 
 void FeaturesCalculation::calculateLumaParameter(Mat srcImage)
 {
-    Mat channel[3], YCRImage;
-    cvtColor(srcImage, YCRImage, COLOR_BGR2YCrCb);
 
-    split(YCRImage, channel);
-//    imshow("luma", channel[0]);
-
-    int oldLuma, i, oldPixel;
-
-    for( int y = 0; y < srcImg.rows; y++ )
-       {
-            for( int x = 0; x < srcImg.cols; x++ )
-            {
-                if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[1] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[2] == 0))
-                {
-                    i = 0;
-                    for(Seed s: seedVect)
-                    {
-
-                        if(s.GetColor().val[0] == srcImg.at<Vec3b>(y,x)[0] &&
-                           s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
-                           s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
-                        {
-
-                            oldLuma = s.GetLuma();
-                            int l = channel[0].at<uchar>(y, x);
-                            seedVect[i].SetLuma(oldLuma + l);
-                            oldPixel = s.GetCountOfPixels();
-                            seedVect[i].SetCountOfPixels(oldPixel+1);
-                            break;
-                        }
-                        i++;
-                    }
-                }
-            }
-       }
-    float luma = 0;
-    for(int k = 0; k < seedVect.length(); k++)
-    {
-        luma = seedVect[k].GetLuma() / seedVect[k].GetCountOfPixels();
-        seedVect[k].SetLuma(luma);
-        luma = 0;
-    }
-
+    calculateSomeGeometryParam(LUMA);
 }
 
 void FeaturesCalculation::calculateMatExpectation()
 {
-    Mat channel[3], YCRImage;
-    cvtColor(firstImg, YCRImage, COLOR_BGR2YCrCb);
-
-    split(YCRImage, channel);
-
-
-    int  i;
-
-    for( int y = 0; y < srcImg.rows; y++ )
-       {
-            for( int x = 0; x < srcImg.cols; x++ )
-            {
-                if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[1] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[2] == 0))
-                {
-                    i = 0;
-                    for(Seed s: seedVect)
-                    {
-
-                        if(s.GetColor().val[0] == srcImg.at<Vec3b>(y,x)[0] &&
-                           s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
-                           s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
-                        {
-                            seedVect[i].countOfPixelsOnLevel[channel[0].at<uchar>(y,x)]++;
-                        }
-                        i++;
-                    }
-                }
-            }
-       }
-
-//        printf("\n");
-//        int l = 0;
-//        for(int i = 0; i < 256; i++)
-//        {
-////            l += seedVect[0].countOfPixelsOnLevel[i];
-//            printf("%d ", seedVect[0].countOfPixelsOnLevel[i]);
-//        }
-
-
-    for(int index = 0; index < seedVect.length(); index++)
-    {
-        for(int k = 0; k < 256; k++)
-        {
-            seedVect[index].matExpect += k * seedVect[index].countOfPixelsOnLevel[k] / seedVect[index].GetArea();
-        }
-    }
-
-
-
-
-
-//    printf("\n");
-//    for(int i = 0; i < 256; i++)
-//    {
-//        printf("%d ", seedVect[0].countOfPixelsOnLevel[i]);
-//    }
-//    printf("\n");
+    calculateSomeGeometryParam(MATEXP);
 }
 
 void FeaturesCalculation::calculateDispertion()
@@ -248,107 +237,14 @@ void FeaturesCalculation::calculateDispertion()
 
 void FeaturesCalculation::calculateMassCenter()
 {
-    int i;
-    for( int y = 0; y < srcImg.rows; y++ )
-       {
-            for( int x = 0; x < srcImg.cols; x++ )
-            {
-                if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[1] == 0 &&
-                        srcImg.at<Vec3b>(y,x)[2] == 0))
-                {
-                    i = 0;
-                    for(Seed s: seedVect)
-                    {
-
-                        if(s.GetColor().val[0] == srcImg.at<Vec3b>(y,x)[0] &&
-                           s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
-                           s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
-                        {
-                            seedVect[i].centerMass.x += x ;
-
-                            seedVect[i].centerMass.y += y ;
-
-//                            printf("x = %d y = %d\n", seedVect[i].centerMass.x, seedVect[i].centerMass.y);
-                        }
-                        i++;
-                    }
-                }
-            }
-       }
-    for(int index = 0; index < seedVect.length(); index++)
-    {
-
-        seedVect[index].centerMass.x /= seedVect[index].GetArea();
-        seedVect[index].centerMass.y /= seedVect[index].GetArea();
-    }
+    calculateSomeGeometryParam(MASSCENTRE);
 }
 
 
 void FeaturesCalculation::calculateElongation()
 {
-    int len = seedVect.length();
-    double *m11 = new double[len];
-    double *m02 = new double[len];
-    double *m20 = new double[len];
-//    memset(m11, 0.0, len*sizeof(double));
-//    memset(m02, 0.0, len*sizeof(double));
-//    memset(m20, 0.0, len*sizeof(double));
-//    fill_n(m11, len, 0);
-//    fill_n(m02, len, 0);
-//    fill_n(m20, len, 0);
 
-    for(int i =0; i < len; i++)
-    {
-        m11[i] = 0;
-        m02[i] = 0;
-        m20[i] = 0;
-//        printf("m11 = %f m02 = %f m20 = %f\n", m11[i], m02[i], m20[i]);
-    }
-
-
-//    for(int i = 0; i < seedVect.length(); i++)
-//    {
-//        printf("m11 = %d m02 = %d m20 = %d\n", m11[i], m02[i], m20[i]);
-//    }
-    int i;
-    for( int y = 0; y < srcImg.rows; y++ )
-       {
-            for( int x = 0; x < srcImg.cols; x++ )
-            {
-                if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
-                     srcImg.at<Vec3b>(y,x)[1] == 0 &&
-                     srcImg.at<Vec3b>(y,x)[2] == 0))
-                {
-                    i = 0;
-                    for(Seed s: seedVect)
-                    {
-                        if(s.GetColor().val[0] == srcImg.at<Vec3b>(y,x)[0] &&
-                           s.GetColor().val[1] == srcImg.at<Vec3b>(y,x)[1] &&
-                           s.GetColor().val[2] == srcImg.at<Vec3b>(y,x)[2])
-                        {
-                            m11[i] += (x - seedVect[i].centerMass.x)*(y - seedVect[i].centerMass.y);
-                            m02[i] += qPow((y - seedVect[i].centerMass.y), 2);
-                            m20[i] += qPow((x - seedVect[i].centerMass.x), 2);
-
-//                            printf("m11 = %d m02 = %d m20 = %d\n", m11[i], m02[i], m20[i]);
-                        }
-                        i++;
-                    }
-                }
-            }
-       }
-
-    double m1=0, m2=0;
-    for(int index = 0; index < seedVect.length(); index++)
-    {
-        m1 = (m20[index] + m02[index] + qSqrt((m20[index] - m02[index])*(m20[index] - m02[index]) + 4*m11[index]*m11[index]));
-        m2 = (m20[index] + m02[index] - qSqrt((m20[index] - m02[index])*(m20[index] - m02[index]) + 4*m11[index]*m11[index]));
-        seedVect[index].elongation = m1 / m2;
-
-//        printf("elongation = %f, m1 = %f, m2 =%f, m20 = %f, m02 = %f, m11 = %f\n", seedVect[index].elongation, m1, m2,m20[index], m02[index],m11[index]);
-    }
-
+    calculateSomeGeometryParam(ELONGATION);
 }
 
 
@@ -366,7 +262,6 @@ void FeaturesCalculation::calculateTextureGLCM()
        {
             for( int x = 0; x < srcImg.cols; x++ )
             {
-
                 //printf("p(%d,%d)[%d][%d][%d]\n",y,x, srcImg.at<Vec3b>(y,x)[0],srcImg.at<Vec3b>(y,x)[1],srcImg.at<Vec3b>(y,x)[2]);
                 if(!(srcImg.at<Vec3b>(y,x)[0] == 0 &&
                         srcImg.at<Vec3b>(y,x)[1] == 0 &&
@@ -455,35 +350,35 @@ void FeaturesCalculation::createGLCM(int indexOfSeed)
 
 void FeaturesCalculation::calculateContrast()
 {
-    calculateParameter(CONTRAST);
+    calculateTextureParameter(CONTRAST);
 }
 
 void FeaturesCalculation::calculateHomogeneity()
 {
-   calculateParameter(HOMOGENEITY);
+   calculateTextureParameter(HOMOGENEITY);
 }
 
 void FeaturesCalculation::calculateDissimilarity()
 {
-    calculateParameter(DISSIMILARITY);
+    calculateTextureParameter(DISSIMILARITY);
 }
 
 void FeaturesCalculation::calculateEntropy()
 {
-    calculateParameter(ENTROPY);
+    calculateTextureParameter(ENTROPY);
 }
 
 void FeaturesCalculation::calculateEnergy()
 {
-    calculateParameter(ENERGY);
+    calculateTextureParameter(ENERGY);
 }
 
 void FeaturesCalculation::calculateCorrelation()
 {
-    calculateParameter(CORRELATION);
+    calculateTextureParameter(CORRELATION);
 }
 
-void FeaturesCalculation::calculateParameter(PARAMETR param)
+void FeaturesCalculation::calculateTextureParameter(PARAMETR param)
 {
     float qrt = 0, fabs = 0, thigmaSqr = 0, U = 0;
     for(int k = 0; k < seedVect.length(); k++)
@@ -491,20 +386,20 @@ void FeaturesCalculation::calculateParameter(PARAMETR param)
         for(int i=0; i< seedVect[k].GLCM.rows; i++)
             for(int j=0; j< seedVect[k].GLCM.cols; j++)
             {
-                switch (param) {
-                case DISSIMILARITY:
+
+                if(param == DISSIMILARITY)
                 {
                     qrt = qPow(i-j,2);
                     fabs = qSqrt(qrt);
                     seedVect[k].dissimilarity += fabs*seedVect[k].GLCM.at<uchar>(i,j);
                 }
-                break;
-                case ENERGY:
+
+                if(param == ENERGY)
                 {
                     seedVect[k].energy += qPow(seedVect[k].GLCM.at<uchar>(i,j),2);
                 }
-                break;
-                case ENTROPY:
+
+                if(param == ENTROPY)
                 {
                     if (seedVect[k].GLCM.at<uchar>(i,j) != 0)
                     {
@@ -513,15 +408,15 @@ void FeaturesCalculation::calculateParameter(PARAMETR param)
                     }
 //                    printf("ln = %f, char =%d entropy = %f\n", ln, seedVect[k].GLCM.at<uchar>(i,j), seedVect[k].entropy);
                 }
-                break;
-                case HOMOGENEITY:
+
+                if(param == HOMOGENEITY)
                 {
                     qrt = qPow(i-j,2);
                     if(qrt != 1)
                         seedVect[k].homogeneity += (1/(1-qPow(i-j,2)))*seedVect[k].GLCM.at<uchar>(i,j);
                 }
-                break;
-                case CONTRAST:
+
+                if(param == CONTRAST)
                 {
                     int pixel = seedVect[k].GLCM.at<uchar>(i,j);
                     float dividing = pixel;
@@ -530,39 +425,38 @@ void FeaturesCalculation::calculateParameter(PARAMETR param)
 
                     seedVect[k].contrast += contr;
                 }
-                break;
-                case CORRELATION:
+
+                if(param == CORRELATION)
                 {
                     calculateUandThigma(k, U, thigmaSqr);
                     seedVect[k].correlation += seedVect[k].GLCM.at<uchar>(i,j)*(i-U)*(j-U) / thigmaSqr;
                 }
-                break;
-                }
+
+
 
             }
 
 
-        switch (param) {
-        case DISSIMILARITY:
+
+        if(param == DISSIMILARITY)
             seedVect[k].dissimilarity = seedVect[k].dissimilarity / (seedVect[k].countOfPairs);
-            break;
-        case HOMOGENEITY:
+
+        if(param == HOMOGENEITY)
             seedVect[k].homogeneity = seedVect[k].homogeneity / (seedVect[k].countOfPairs);
-            break;
-        case CONTRAST:
+
+        if(param == CONTRAST)
             seedVect[k].contrast = seedVect[k].contrast/(seedVect[k].countOfPairs);
-            break;
-        case ENERGY:
+
+        if(param == ENERGY)
             seedVect[k].energy = seedVect[k].energy / (seedVect[k].countOfPairs);
-            break;
-        case ENTROPY:
+
+        if(param == ENTROPY)
             seedVect[k].entropy = seedVect[k].entropy / (seedVect[k].countOfPairs);
-            break;
-        case CORRELATION:
+
+        if(param == CORRELATION)
             seedVect[k].correlation = seedVect[k].correlation / (seedVect[k].countOfPairs);
-        default:
-            break;
-        }
+
+
 
 
 

@@ -12,6 +12,7 @@ SVMclassifier::~SVMclassifier()
 
 SVMclassifier::SVMclassifier(QVector<Seed> seedVector, QVector<int> featVector, int clusters, QVector<QVector<int> > trainDataObj) : QObject(0)
 {
+
     seedVect = QVector<Seed>(seedVector);
     featVect = QVector<int>(featVector);
     trainigDataObjs = QVector<QVector<int> >(trainDataObj);

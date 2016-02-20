@@ -76,7 +76,10 @@ bool ChooseFeaturesWindow::dispertionBoxChecked()
     return ui->dispertionCheckBox->isChecked();
 }
 
-
+bool ChooseFeaturesWindow::elongationBoxChecked()
+{
+    return ui->elongationCheckBox->isChecked();
+}
 
 
 void ChooseFeaturesWindow::on_okButton_clicked()
@@ -108,6 +111,11 @@ void ChooseFeaturesWindow::on_okButton_clicked()
     if (ui->dispertionCheckBox->isChecked())
         features.push_back(DISPERTION);
 
-
-    this->hide();
+    if(features.empty())
+    {
+        QMessageBox::information(this, tr("Classification"), tr("There is no features were chosen"));
+    } else
+    {
+        this->hide();
+    }
 }

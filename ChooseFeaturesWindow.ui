@@ -142,7 +142,7 @@
      <string>Compactness</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="areaCheckBox">
@@ -157,8 +157,14 @@
     <property name="text">
      <string>Area</string>
     </property>
+    <property name="checked">
+     <bool>true</bool>
+    </property>
    </widget>
    <widget class="QCheckBox" name="perimetrCheckBox">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -171,7 +177,7 @@
      <string>Perimetr</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="elongationCheckBox">
@@ -185,6 +191,9 @@
     </property>
     <property name="text">
      <string>Elongation</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
@@ -212,6 +221,9 @@
     <property name="text">
      <string>Dispertion</string>
     </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QCheckBox" name="matExtectCheckBox">
     <property name="geometry">
@@ -224,6 +236,9 @@
     </property>
     <property name="text">
      <string>MatExpect</string>
+    </property>
+    <property name="checked">
+     <bool>true</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="lumaCheckBox">

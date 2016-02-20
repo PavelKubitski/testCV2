@@ -525,9 +525,9 @@
    <widget class="QTableView" name="clusterTableView">
     <property name="geometry">
      <rect>
-      <x>490</x>
+      <x>550</x>
       <y>530</y>
-      <width>221</width>
+      <width>211</width>
       <height>91</height>
      </rect>
     </property>
@@ -640,6 +640,20 @@
     </property>
     <property name="text">
      <string>Features</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="tryAgainClassifButton">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>530</y>
+      <width>115</width>
+      <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Try again to 
+classify</string>
     </property>
    </widget>
   </widget>

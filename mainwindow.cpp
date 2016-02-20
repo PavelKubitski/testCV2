@@ -32,7 +32,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->HSVButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHSV()));
     connect(ui->HLSButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoHLS()));
     connect(ui->LABButton, SIGNAL(clicked()), this, SLOT(ChangeColorSystemRGBtoLab()));
-    connect(ui->closingButton, SIGNAL(clicked()), this, SLOT(CircuitFilter()));
+    connect(ui->closingButton, SIGNAL(clicked()), this, SLOT(ClosingFilter()));
     connect(ui->openingButton, SIGNAL(clicked()), this, SLOT(OpeningFilter()));
     connect(ui->otsuButton, SIGNAL(clicked()), this, SLOT(AdaptiveThresholdOtsu()));
     connect(ui->skeletonButton, SIGNAL(clicked()), this, SLOT(MorphologySkeleton()));
@@ -277,7 +277,7 @@ void MainWindow::AdaptiveThreshold()
             Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
             adaptiveThreshold(matsrc, dst, 255,CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY_INV, blockSize, constantC);
             duplicateMatSrc = dst.clone();
-            showOnGrayLabel(duplicateMatSrc, "Binarizatin");
+            showOnGrayLabel(duplicateMatSrc, "Binarization");
             binarizated = true;
             dst.release();
         }
@@ -293,8 +293,7 @@ void MainWindow::AdaptiveThreshold()
 }
 
 
-//blur = cv2.GaussianBlur(img,(5,5),0)
-//    ret3,th3 = cv2.threshold(blur,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
+
 
 void MainWindow::AdaptiveThresholdOtsu()
 {
@@ -398,6 +397,7 @@ void MainWindow::MedianFilter()
     {
         if(binarizated == true)
         {
+            setEnabledAfterFilterButtonClicked(false);
             if(!duplicateMatSrc.empty())
             {
                 matsrc = duplicateMatSrc.clone();
@@ -437,8 +437,7 @@ void MainWindow::ErodeFilter()
     {
         if(binarizated == true)
         {
-        ui->toGrayScaleButton->setEnabled(false);
-        ui->adaptiveThresButton->setEnabled(false);
+        setEnabledAfterFilterButtonClicked(false);
         if(!duplicateMatSrc.empty())
         {
             matsrc = duplicateMatSrc.clone();
@@ -464,14 +463,22 @@ void MainWindow::ErodeFilter()
     }
 }
 
+void MainWindow::setEnabledAfterFilterButtonClicked(bool state)
+{
+    ui->toGrayScaleButton->setEnabled(state);
+    ui->adaptiveThresButton->setEnabled(state);
+    ui->otsuButton->setEnabled(state);
+    ui->grayScaleCheckBox->setEnabled(state);
+}
+
+
 void MainWindow::DilatingFilter()
 {
     if(!matsrc.empty())
     {
         if(binarizated == true)
         {
-            ui->toGrayScaleButton->setEnabled(false);
-            ui->adaptiveThresButton->setEnabled(false);
+            setEnabledAfterFilterButtonClicked(false);
             if(!duplicateMatSrc.empty())
             {
                 matsrc = duplicateMatSrc.clone();
@@ -497,14 +504,13 @@ void MainWindow::DilatingFilter()
     }
 }
 
-void MainWindow::CircuitFilter()
+void MainWindow::ClosingFilter()
 {
     if(!matsrc.empty())
     {
         if(binarizated == true)
         {
-            ui->toGrayScaleButton->setEnabled(false);
-            ui->adaptiveThresButton->setEnabled(false);
+            setEnabledAfterFilterButtonClicked(false);
             if(!duplicateMatSrc.empty())
             {
                 matsrc = duplicateMatSrc.clone();
@@ -538,8 +544,7 @@ void MainWindow::OpeningFilter()
     {
         if(binarizated == true)
         {
-            ui->toGrayScaleButton->setEnabled(false);
-            ui->adaptiveThresButton->setEnabled(false);
+            setEnabledAfterFilterButtonClicked(false);
             if(!duplicateMatSrc.empty())
             {
                 matsrc = duplicateMatSrc.clone();
@@ -585,15 +590,10 @@ void MainWindow::AllocateObjects()
         {
             if(!duplicateMatSrc.empty())
             {
-                matsrc = duplicateMatSrc.clone();
-                duplicateMatSrc.release();
+//                matsrc = duplicateMatSrc.clone();
+//                duplicateMatSrc.release();
             }
-            ui->toGrayScaleButton->setEnabled(false);
-            ui->adaptiveThresButton->setEnabled(false);
-            ui->medianFilterButton->setEnabled(false);
-            ui->maxFilterButton->setEnabled(false);
-            ui->minFilterButton->setEnabled(false);
-            ui->denyFilterButton->setEnabled(false);
+
 
             findContours( matsrc, contours, hierarchy, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE, Point(0, 0) );
 
@@ -625,6 +625,18 @@ void MainWindow::AllocateObjects()
     {
         QMessageBox::information(this, tr("Allocate objects"), tr("Image is not downloaded"));
     }
+}
+
+void MainWindow::setEnabledButtonsAfterChoosingFeatures(bool state)
+{
+    ui->toGrayScaleButton->setEnabled(state);
+    ui->adaptiveThresButton->setEnabled(state);
+    ui->medianFilterButton->setEnabled(state);
+    ui->maxFilterButton->setEnabled(state);
+    ui->minFilterButton->setEnabled(state);
+    ui->denyFilterButton->setEnabled(state);
+    ui->openingButton->setEnabled(state);
+    ui->closingButton->setEnabled(state);
 }
 
 void MainWindow::CalculateFeatures(Mat drawing)
@@ -665,7 +677,7 @@ void MainWindow::CalculateFeatures(Mat drawing)
 
     calculator.calculateMassCenter();
 
-    if(featuresWindow->dispertionBoxChecked())
+    if(featuresWindow->elongationBoxChecked())
         calculator.calculateElongation();
 
 
@@ -679,63 +691,16 @@ void MainWindow::CalculateFeatures(Mat drawing)
 //    for(int i = 0; i < seedVect.length(); i++)
 //        printf("%f\n", seedVect[i].elongation);
 //    for(int i =0; i<seedVect.length(); i++)
-//        printf("x = %d y = %d\n", seedVect[i].centerMass.x, seedVect[i].centerMass.y);
+//        cout << "area = " <<seedVect[i].GetArea() <<" luma = " <<seedVect[i].GetLuma() << " matexp = " << seedVect[i].matExpect
+//             <<" centre = " <<seedVect[i].centerMass << " ellong = " << seedVect[i].elongation << "\n ";
 }
 
 
-
-void MainWindow::Kmeans()
-{
-    if(!matsrc.empty())
-    {
-        if(seedVect.empty())
-        {
-            QMessageBox::information(this, tr("Allocate objects"), tr("Objects are not allocated"));
-        }
-        else
-        {
-            ui->allocateObjButton->setEnabled(false);
-            int attribute = 3;
-            Mat samples(seedVect.length(), attribute, CV_32F);
-            for(int i = 0; i < seedVect.length(); i++)
-            {
-                samples.at<float>(i,0) = seedVect[i].GetArea();
-                samples.at<float>(i,1) = seedVect[i].GetCompactness();
-                samples.at<float>(i,2) = seedVect[i].GetPerimetr();
-            }
-
-              int clusterCount = ui->clusterSpinBox->value();
-              Mat labels;
-              int attempts = 5;
-              Mat centers;
-              kmeans(samples, clusterCount, labels, TermCriteria(CV_TERMCRIT_ITER|CV_TERMCRIT_EPS, 10000, 0.0001), attempts, KMEANS_PP_CENTERS, centers );
-
-              for(int i = 0 ;i < seedVect.length(); i++)
-              {
-                  int cluster_idx = labels.at<int>(i,0);
-                  seedVect[i].SetCluster(cluster_idx);
-              }
-            showClusters(matsrc);
-            ShowKmeansStatistics();
-            samples.release();
-            labels.release();
-            centers.release();
-        }
-    }
-    else
-    {
-        QMessageBox::information(this, tr("Allocate objects"), tr("Image is not downloaded"));
-    }
-    //showOnSrcLabel(matsrc);
-
-}
 
 
 void MainWindow::showClusters(Mat srcImg)
 {
     int i;
-
-
     for( int y = 0; y < srcImg.rows; y++ )
        {
             for( int x = 0; x < srcImg.cols; x++ )
@@ -769,27 +734,28 @@ void MainWindow::showClusters(Mat srcImg)
 
 
 
-void MainWindow::ShowKmeansStatistics()
+void MainWindow::ShowClassificationStatistics()
 {
     QStandardItemModel *model = new QStandardItemModel(ui->clusterSpinBox->value(),2,this); //2 Rows and 2 Columns
     model->setHorizontalHeaderItem(0, new QStandardItem(QString("Object")));
     model->setHorizontalHeaderItem(1, new QStandardItem(QString("Percentage")));
     ui->clusterTableView->setModel(model);
 
-    double allSeeds = 0;
+//    double allSeeds = 0;
     QVector<int> clusters(ui->clusterSpinBox->value(), 0);
 
     for(Seed s: seedVect)    
     {
         clusters[s.GetCluster()]++;
-        allSeeds++;
+//        allSeeds++;
     }
 
     for(int i = 0; i < ui->clusterSpinBox->value(); i++)
     {
         QStandardItem *item = new QStandardItem();
         QStandardItem *itemText = new QStandardItem();
-        itemText->setText(QString::number((clusters[i]*100)/allSeeds) + "%");
+//        itemText->setText(QString::number((clusters[i]*100)/allSeeds) + "%");
+        itemText->setText(QString::number(clusters[i]));
         item->setData(QColor(getColor(i).val[0], getColor(i).val[1], getColor(i).val[2]), Qt::BackgroundRole);
         model->setItem(i,0,item);
         model->setItem(i,1,itemText);
@@ -908,12 +874,17 @@ void MainWindow::StartClassification()
     QVector<QVector<int> > trainingData = trainingDataWindow->getTrainDataObjsVectrs();
     if(!trainingData.empty())
     {
+
         QVector<int> feat = featuresWindow->features;
+
         SVMclassifier svm(seedVect, feat, ui->clusterSpinBox->value(), trainingData);
         svm.FillTrainingMat();
         seedVect = svm.GetSeedVector();
 
         showClusters(matsrc);
+        ShowClassificationStatistics();
+
+
     } else {
         QMessageBox::information(this, tr("Classification"), tr("Need training data, click on \"SVM\" button again"));
     }
@@ -926,6 +897,20 @@ void MainWindow::StartClassification()
 
 void MainWindow::on_featuresButton_clicked()
 {
+    imshow("matsrc", matsrc);
+    seedVectorOldVertion = QVector<Seed>(seedVect);
+    duplicateMatSrc = matsrc.clone();
+    imshow("duplicateMatSrc", duplicateMatSrc);
     featuresWindow = new ChooseFeaturesWindow();
+    setEnabledButtonsAfterChoosingFeatures(false);
     featuresWindow->show();
+}
+
+void MainWindow::on_tryAgainClassifButton_clicked()
+{
+    matsrc = duplicateMatSrc.clone();
+    imshow("matsrc2", matsrc);
+    imshow("duplicateMatSrc2", duplicateMatSrc);
+    seedVect = QVector<Seed>(seedVectorOldVertion);
+    showOnSrcLabel(matsrc);
 }

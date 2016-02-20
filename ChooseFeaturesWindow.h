@@ -2,6 +2,7 @@
 #define CHOOSEFEATURESWINDOW_H
 
 #include <QDialog>
+#include <QMessageBox>
 
 enum FEATURES { AREA = 0, PERIMETR, COMPACTNESS, ELONGATION, LUMA, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION, MATEXPECT, DISPERTION };
 
@@ -34,6 +35,7 @@ public:
     bool correlationBoxChecked();
     bool dispertionBoxChecked();
     bool matExpectBoxChecked();
+    bool elongationBoxChecked();
 private slots:
     void on_okButton_clicked();
 

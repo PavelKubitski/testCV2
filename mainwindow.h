@@ -36,7 +36,7 @@ class MainWindow : public QMainWindow
     Ui::MainWindow *ui;
     QStack<Mat> imgStack;
     QVector<Seed> seedVect;
-
+    QVector<Seed> seedVectorOldVertion;
     bool binarizated;
 
     ChooseFeaturesWindow *featuresWindow;
@@ -57,12 +57,12 @@ public slots:
     void MedianFilter();
     void DenyFilter();
     void ErodeFilter();
-    void CircuitFilter();
+    void ClosingFilter();
     void DilatingFilter();
     void AllocateObjects();
     void OpeningFilter();
-    void Kmeans();
-    void ShowKmeansStatistics();
+
+    void ShowClassificationStatistics();
     void ChangeColorSystemRGBtoCMYK();
     void ChangeColorSystemRGBtoHSV();
     void ChangeColorSystemRGBtoHLS();
@@ -74,6 +74,8 @@ public slots:
 private slots:
     void on_grayScaleCheckBox_clicked();
     void on_featuresButton_clicked();
+
+    void on_tryAgainClassifButton_clicked();
 
 private:
 
@@ -96,6 +98,8 @@ private:
     Scalar getColor(int cluster);
     void showClusters(Mat srcImg);
 
+    void setEnabledButtonsAfterChoosingFeatures(bool state);
+    void setEnabledAfterFilterButtonClicked(bool state);
 };
 
 #endif // MAINWINDOW_H

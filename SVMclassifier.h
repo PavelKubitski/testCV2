@@ -4,12 +4,13 @@
 #include <QObject>
 #include <seed.h>
 #include <QVector>
-//#include <svm.h>
+
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <opencv2/ml/ml.hpp>
 #include <ChooseFeaturesWindow.h>
 #include <seed.h>
+#include <QMessageBox>
 
 using namespace cv;
 using namespace std;
