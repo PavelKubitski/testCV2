@@ -51,7 +51,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>1</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_2">
@@ -64,7 +64,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>2</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_3">
@@ -77,7 +77,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>3</string>
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cluster1checkBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enough</string>
     </property>
    </widget>
   </widget>
@@ -103,7 +116,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>1</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_5">
@@ -116,7 +129,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>2</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_6">
@@ -129,7 +142,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>3</string>
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cluster2checkBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enough</string>
     </property>
    </widget>
   </widget>
@@ -155,7 +181,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>1</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_8">
@@ -168,7 +194,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>2</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_9">
@@ -181,7 +207,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>2</string>
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cluster3checkBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enough</string>
     </property>
    </widget>
   </widget>
@@ -207,7 +246,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>1</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_11">
@@ -220,7 +259,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>2</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_12">
@@ -233,7 +272,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>3</string>
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cluster4checkBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enough</string>
     </property>
    </widget>
   </widget>
@@ -259,7 +311,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>1</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_14">
@@ -272,7 +324,7 @@
      </rect>
     </property>
     <property name="text">
-     <string>2</string>
+     <string>-</string>
     </property>
    </widget>
    <widget class="QLabel" name="label_15">
@@ -285,7 +337,20 @@
      </rect>
     </property>
     <property name="text">
-     <string>3</string>
+     <string>-</string>
+    </property>
+   </widget>
+   <widget class="QCheckBox" name="cluster5checkBox">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>20</y>
+      <width>89</width>
+      <height>20</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Enough</string>
     </property>
    </widget>
   </widget>

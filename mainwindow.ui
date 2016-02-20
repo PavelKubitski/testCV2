@@ -522,22 +522,6 @@
      </property>
     </widget>
    </widget>
-   <widget class="QTableView" name="clusterTableView">
-    <property name="geometry">
-     <rect>
-      <x>550</x>
-      <y>530</y>
-      <width>211</width>
-      <height>91</height>
-     </rect>
-    </property>
-    <property name="lineWidth">
-     <number>1</number>
-    </property>
-    <property name="midLineWidth">
-     <number>0</number>
-    </property>
-   </widget>
    <widget class="QPushButton" name="CMYKButton">
     <property name="geometry">
      <rect>
@@ -654,6 +638,16 @@
     <property name="text">
      <string>Try again to 
 classify</string>
+    </property>
+   </widget>
+   <widget class="QTableWidget" name="clusterTableWidget">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>530</y>
+      <width>211</width>
+      <height>81</height>
+     </rect>
     </property>
    </widget>
   </widget>

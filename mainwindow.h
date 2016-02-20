@@ -24,7 +24,7 @@ class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
-    enum ColorSystem { NONE, CMYK, HSV, HLS, LAB };
+    enum ColorSystem { CMYK, HSV, HLS, LAB, NONE };
     vector<Mat> CSvector;     //CS - color system
     vector<Mat> CSvectorColored;
 

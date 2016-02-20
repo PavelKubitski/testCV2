@@ -22,12 +22,13 @@ TrainingDataDialog::TrainingDataDialog(QVector<Seed> seedVector, int countOfClus
     ui->Cluster5GroupBox->hide();
 
     showActiveGroupBox();
+    countOfThirds = 0;
 
-    trainDataObjsVectrs = QVector<QVector<int> >();
+    trainDataObjsVectrs = QVector<QVector<int> >(countOfClusters);
 
     this->allocObjMat = allocObjMat.clone();
     this->srcImg = srcImg.clone();
-    countOfObjs = 0;
+    countOfObjsInCluster = 0;
     float cols = this->srcImg.cols;
     float rows = this->srcImg.rows;
     int width = ui->matDisplayLabel->width();
@@ -36,7 +37,7 @@ TrainingDataDialog::TrainingDataDialog(QVector<Seed> seedVector, int countOfClus
     ui->matDisplayLabel->setFixedSize(width, height);
     showOnSrcLabel(this->srcImg);
     countOfObjsInGrBox = 3;
-
+    currentCluster = 0;
 //    printf("label x = %d, y = %d\n", ui->matDisplayLabel->width(), ui->matDisplayLabel->height());
 //    printf("srcimg x = %d, y = %d", this->srcImg.cols, this->srcImg.rows);
 }
@@ -74,39 +75,158 @@ void TrainingDataDialog::colorOfСircuit(QPoint &pos)
 
     imgX = imgX * srcImg.cols;
     imgY = imgY * srcImg.rows;
-//    imshow("src", srcImg);
-//    imshow("all", allocObjMat);
+
+
     for(int i = 0; i < seedVect.length(); i++)
     {
         if(     allocObjMat.at<Vec3b>(imgY, imgX)[0] == seedVect[i].GetColor().val[0] &&
                 allocObjMat.at<Vec3b>(imgY, imgX)[1] == seedVect[i].GetColor().val[1] &&
                 allocObjMat.at<Vec3b>(imgY, imgX)[2] == seedVect[i].GetColor().val[2])
         {
-            if(countOfObjs % countOfObjsInGrBox == 0)
-            {
-                trainObjForCluster = QVector<int>();
-            }
-            trainObjForCluster.push_back(i);
-            fillLabels(i);
-            contourDetection(seedVect[i].GetColor());
+//            if(countOfObjs % countOfObjsInGrBox == 0)
+//            {
+//                trainObjForCluster = QVector<int>();
 
-            if(countOfObjs % countOfObjsInGrBox == 2)
+//                trainDataObjsVectrs.push_back(trainObjForCluster);
+//                if(isEnoughObjForCluster(trainDataObjsVectrs.length()+1))
+//                {
+//                    trainDataObjsVectrs.push_back(trainObjForCluster);
+//                }
+//                countOfThirds++;
+//            }
+//            trainObjForCluster.push_back(i);
+//            fillLabels(i);
+//            contourDetection(seedVect[i].GetColor());
+
+
+//            trainDataObjsVectrs[countOfThirds].push_back(i);
+//            countOfObjs++;
+//            showOnSrcLabel(this->srcImg);
+//            break;
+            if(isEnoughObjForCluster(currentCluster))
             {
-                trainDataObjsVectrs.push_back(trainObjForCluster);
+                currentCluster++;
+                countOfObjsInCluster = 0;
             }
-            countOfObjs++;
+            countOfObjsInCluster++;
+            trainDataObjsVectrs[currentCluster].push_back(i);
+            fillLabels(i);
+
+            contourDetection(seedVect[i].GetColor());
             showOnSrcLabel(this->srcImg);
+
+            if(countOfObjsInCluster % countOfObjsInGrBox == 0)
+            {
+                setCheckForCheckBox(currentCluster,true);
+                currentCluster++;
+                countOfObjsInCluster = 0;
+            }
+
             break;
         }
     }
 
 }
 
+void TrainingDataDialog::setCheckForCheckBox(int cluster, bool state)
+{
+    switch (cluster) {
+    case 0:
+    {
+        ui->cluster1checkBox->setChecked(state);
+        ui->cluster1checkBox->setEnabled(false);
+    }
+        break;
+    case 1:
+    {
+        ui->cluster2checkBox->setChecked(state);
+        ui->cluster2checkBox->setEnabled(false);
+    }
+        break;
+    case 2:
+    {
+        ui->cluster3checkBox->setChecked(state);
+        ui->cluster3checkBox->setEnabled(false);
+    }
+        break;
+    case 3:
+    {
+        ui->cluster4checkBox->setChecked(state);
+        ui->cluster4checkBox->setEnabled(false);
+    }
+        break;
+    case 4:
+    {
+        ui->cluster5checkBox->setChecked(state);
+        ui->cluster5checkBox->setEnabled(false);
+    }
+        break;
+    default:
+        break;
+    }
+}
+
+bool TrainingDataDialog::isEnoughObjForCluster(int cluster)
+{
+    bool state = false;
+    switch (cluster+1) {
+    case 1:
+    {
+        if(ui->cluster1checkBox->isChecked())
+        {
+            state = true;
+            ui->cluster1checkBox->setEnabled(false);
+        }
+    }
+        break;
+    case 2:
+    {
+        if(ui->cluster2checkBox->isChecked())
+        {
+            state = true;
+            ui->cluster2checkBox->setEnabled(false);
+        }
+    }
+        break;
+    case 3:
+    {
+        if(ui->cluster3checkBox->isChecked())
+        {
+            state = true;
+            ui->cluster3checkBox->setEnabled(false);
+        }
+    }
+        break;
+    case 4:
+    {
+        if(ui->cluster4checkBox->isChecked())
+        {
+            state = true;
+            ui->cluster4checkBox->setEnabled(false);
+        }
+    }
+        break;
+    case 5:
+    {
+        if(ui->cluster5checkBox->isChecked())
+        {
+            state = true;
+            ui->cluster5checkBox->setEnabled(false);
+        }
+    }
+        break;
+    default:
+        break;
+    }
+    return state;
+}
+
+
 void TrainingDataDialog::contourDetection(Scalar sc)
 {
 
 
-    Scalar color = getColor( (countOfObjs - countOfObjs % countOfObjsInGrBox) / countOfObjsInGrBox);
+    Scalar color = getColor( currentCluster);
     for( int y = 0; y < srcImg.rows; y++ )
     {
         for( int x = 0; x < srcImg.cols; x++ )
@@ -129,7 +249,7 @@ void TrainingDataDialog::contourDetection(Scalar sc)
 
 void TrainingDataDialog::fillLabels(int numberOfObject)
 {
-    switch (countOfObjs) {
+    switch (currentCluster*countOfObjsInGrBox + countOfObjsInCluster-1) {
     case 0:
         ui->label->setText(QString::number(numberOfObject));
         break;
@@ -184,8 +304,40 @@ void TrainingDataDialog::fillLabels(int numberOfObject)
 
 void TrainingDataDialog::showMousePosition(QPoint &pos)
 {
-    if(trainDataObjsVectrs.length() < countOfClusters)
+//    if((trainDataObjsVectrs.length() <= countOfClusters))
+//    {
+//        if(countOfClusters == trainDataObjsVectrs.length())
+//        {
+//            if (trainDataObjsVectrs[countOfClusters-1].length() < countOfObjsInGrBox)
+//            {
+//                colorOfСircuit(pos);
+
+//            }
+//        } else if(trainDataObjsVectrs.length() < countOfClusters)
+//        {
+//            colorOfСircuit(pos);
+//        }
+
+//    }
+
+    if(!isAllCheckBoxAreChecked())
         colorOfСircuit(pos);
+}
+
+bool TrainingDataDialog::isAllCheckBoxAreChecked()
+{
+    bool state = true;
+    if(!ui->cluster1checkBox->isChecked())
+        state = false;
+    if(!ui->cluster2checkBox->isChecked())
+        state = false;
+    if(!ui->cluster3checkBox->isChecked())
+        state = false;
+    if(!ui->cluster4checkBox->isChecked())
+        state = false;
+    if(!ui->cluster5checkBox->isChecked())
+        state = false;
+    return state;
 }
 
 void TrainingDataDialog::on_okButton_clicked()

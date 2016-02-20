@@ -17,12 +17,13 @@ class TrainingDataDialog : public QDialog
 {
     Q_OBJECT
     int countOfClusters;
-    int countOfObjs;
+    int countOfObjsInCluster;
     int countOfObjsInGrBox;
+    int countOfThirds;
     Mat srcImg;
     Mat allocObjMat;
     QVector<QVector<int> > trainDataObjsVectrs;
-
+    int currentCluster;
 public:
     QVector<Seed> seedVect;
 //    QVector<QVector<int> > trainDataObjsVectrs;
@@ -52,6 +53,9 @@ private:
     void contourDetection(Scalar sc);
 
     void showActiveGroupBox();
+    bool isEnoughObjForCluster(int cluster);
+    void setCheckForCheckBox(int cluster, bool state);
+    bool isAllCheckBoxAreChecked();
 signals:
     void trainingDataReady();
 };

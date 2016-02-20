@@ -52,8 +52,8 @@ void MainWindow::OpenPicture()
 //    nameOfOpenFile = QFileDialog::getOpenFileName(this,
 //                                        tr("Open File"), QDir::currentPath(),tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
 
-//    nameOfOpenFile = "bean.jpg";
-    nameOfOpenFile = "sds.png";
+    nameOfOpenFile = "bob, rice, corn.png";
+//    nameOfOpenFile = "sds.png";
 
 
     if(!nameOfOpenFile.isEmpty())
@@ -135,6 +135,16 @@ void MainWindow::ClearForm()
     ui->allocateObjButton->setEnabled(true);
     ui->customSpinBox->setEnabled(true);
     ui->customContrSpinBox->setEnabled(true);
+    ui->CMYKButton->setEnabled(true);
+    ui->HSVButton->setEnabled(true);
+    ui->HLSButton->setEnabled(true);
+    ui->LABButton->setEnabled(true);
+    ui->openingButton->setEnabled(true);
+    ui->closingButton->setEnabled(true);
+    ui->grayScaleCheckBox->setEnabled(true);
+    ui->otsuButton->setEnabled(true);
+    ui->clusterTableWidget->clear();
+
 }
 
 void MainWindow::BrightnessAdjust ( Mat &srcImg, Mat &dstImg, float brightness)
@@ -469,6 +479,10 @@ void MainWindow::setEnabledAfterFilterButtonClicked(bool state)
     ui->adaptiveThresButton->setEnabled(state);
     ui->otsuButton->setEnabled(state);
     ui->grayScaleCheckBox->setEnabled(state);
+    ui->CMYKButton->setEnabled(state);
+    ui->HSVButton->setEnabled(state);
+    ui->HLSButton->setEnabled(state);
+    ui->LABButton->setEnabled(state);
 }
 
 
@@ -736,29 +750,40 @@ void MainWindow::showClusters(Mat srcImg)
 
 void MainWindow::ShowClassificationStatistics()
 {
-    QStandardItemModel *model = new QStandardItemModel(ui->clusterSpinBox->value(),2,this); //2 Rows and 2 Columns
-    model->setHorizontalHeaderItem(0, new QStandardItem(QString("Object")));
-    model->setHorizontalHeaderItem(1, new QStandardItem(QString("Percentage")));
-    ui->clusterTableView->setModel(model);
+//    QStandardItemModel *model = new QStandardItemModel(ui->clusterSpinBox->value(),2,this); //2 Rows and 2 Columns
+//    model->setHorizontalHeaderItem(0, new QStandardItem(QString("Object")));
+//    model->setHorizontalHeaderItem(1, new QStandardItem(QString("Percentage")));
+//    ui->clusterTableWidget->setModel(model);
 
-//    double allSeeds = 0;
+////    double allSeeds = 0;
     QVector<int> clusters(ui->clusterSpinBox->value(), 0);
 
-    for(Seed s: seedVect)    
+    for(Seed s: seedVect)
     {
         clusters[s.GetCluster()]++;
 //        allSeeds++;
     }
 
+//    for(int i = 0; i < ui->clusterSpinBox->value(); i++)
+//    {
+//        QStandardItem *item = new QStandardItem();
+//        QStandardItem *itemText = new QStandardItem();
+////        itemText->setText(QString::number((clusters[i]*100)/allSeeds) + "%");
+//        itemText->setText(QString::number(clusters[i]));
+//        item->setData(QColor(getColor(i).val[0], getColor(i).val[1], getColor(i).val[2]), Qt::BackgroundRole);
+//        model->setItem(i,0,item);
+//        model->setItem(i,1,itemText);
+//    }
+
+    ui->clusterTableWidget->setRowCount(ui->clusterSpinBox->value());
+    ui->clusterTableWidget->setColumnCount(2);
     for(int i = 0; i < ui->clusterSpinBox->value(); i++)
     {
-        QStandardItem *item = new QStandardItem();
-        QStandardItem *itemText = new QStandardItem();
-//        itemText->setText(QString::number((clusters[i]*100)/allSeeds) + "%");
-        itemText->setText(QString::number(clusters[i]));
-        item->setData(QColor(getColor(i).val[0], getColor(i).val[1], getColor(i).val[2]), Qt::BackgroundRole);
-        model->setItem(i,0,item);
-        model->setItem(i,1,itemText);
+        QTableWidgetItem *itemText = new QTableWidgetItem(QString::number(clusters[i]));
+        QTableWidgetItem *itemColor = new QTableWidgetItem();
+        itemColor->setData( Qt::BackgroundRole, QColor(getColor(i).val[0], getColor(i).val[1], getColor(i).val[2]));
+        ui->clusterTableWidget->setItem(i,0,itemColor);
+        ui->clusterTableWidget->setItem(i,1 , itemText);
     }
 }
 
@@ -892,15 +917,23 @@ void MainWindow::StartClassification()
     {
         QMessageBox::information(this, tr("Classification"), tr("Need more training data, click on \"SVM\" button again"));
     }
+    for(int i=0;i<trainingData.length(); i++)
+    {
+        if(trainingData[i].length() == 0)
+        {
+            QMessageBox::information(this, tr("Classification"), tr("Need more training data in cluster № %1, click on \"SVM\" button again").arg(i));
+        }
+    }
+
 }
 
 
 void MainWindow::on_featuresButton_clicked()
 {
-    imshow("matsrc", matsrc);
+//    imshow("matsrc", matsrc);
     seedVectorOldVertion = QVector<Seed>(seedVect);
     duplicateMatSrc = matsrc.clone();
-    imshow("duplicateMatSrc", duplicateMatSrc);
+//    imshow("duplicateMatSrc", duplicateMatSrc);
     featuresWindow = new ChooseFeaturesWindow();
     setEnabledButtonsAfterChoosingFeatures(false);
     featuresWindow->show();
@@ -909,8 +942,8 @@ void MainWindow::on_featuresButton_clicked()
 void MainWindow::on_tryAgainClassifButton_clicked()
 {
     matsrc = duplicateMatSrc.clone();
-    imshow("matsrc2", matsrc);
-    imshow("duplicateMatSrc2", duplicateMatSrc);
+//    imshow("matsrc2", matsrc);
+//    imshow("duplicateMatSrc2", duplicateMatSrc);
     seedVect = QVector<Seed>(seedVectorOldVertion);
     showOnSrcLabel(matsrc);
 }

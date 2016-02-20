@@ -24,7 +24,13 @@ void SVMclassifier::FillTrainingMat()
 // AREA = 0, PERIMETR, COMPACTNESS, ELONGATION, LUMA, CONTRAST, HOMOGENEITY, DISSIMILARITY, ENERGY, ENTROPY, CORRELATION, MATEXPECT, DISPERTION
 
     int indexOfObject = 0;
-    int countOfOb = trainigDataObjs.length()*trainigDataObjs[0].length();
+    int countOfOb = 0;
+    for(int i = 0; i < trainigDataObjs.length(); i++)
+        for(int j = 0; j < trainigDataObjs[i].length(); j++)
+            countOfOb++;
+
+
+
     float labels[countOfOb];
 
     float trainingData[countOfOb][featVect.length()]; //= new float*[countOfOb];//[featVect.length()]
