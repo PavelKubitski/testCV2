@@ -123,7 +123,7 @@ void FeaturesCalculation::calculateSomeGeometryParam(PARAMETR param)
         {
             m1 = (m20[index] + m02[index] + qSqrt((m20[index] - m02[index])*(m20[index] - m02[index]) + 4*m11[index]*m11[index]));
             m2 = (m20[index] + m02[index] - qSqrt((m20[index] - m02[index])*(m20[index] - m02[index]) + 4*m11[index]*m11[index]));
-            cout << "m1 = " << m1 << "m2 = " << m2 << "\n";
+//            cout << "m1 = " << m1 << "m2 = " << m2 << "\n";
             seedVect[index].elongation = m1 / m2;
         }
     }

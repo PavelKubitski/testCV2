@@ -24,6 +24,7 @@ Seed::Seed()
     dispersion = 0;
     centerMass = Point(0,0);
     elongation = 0;
+    probability = 0;
 //    for(int i = 0; i < 256; i++)
 //    {
 //        printf("%d ", countOfPixelsOnLevel[i]);

@@ -15,6 +15,7 @@
 #include <FeaturesCaculation.h>
 #include <ChooseFeaturesWindow.h>
 #include <TrainingDataDialog.h>
+#include <ROCDialog.h>
 
 namespace Ui {
 class MainWindow;
@@ -35,9 +36,11 @@ class MainWindow : public QMainWindow
     Mat firstImage;
     Ui::MainWindow *ui;
     QStack<Mat> imgStack;
+    QStack<Mat> imgBinaryStack;
     QVector<Seed> seedVect;
     QVector<Seed> seedVectorOldVertion;
     bool binarizated;
+    QString fileName;
 
     ChooseFeaturesWindow *featuresWindow;
     TrainingDataDialog *trainingDataWindow;
@@ -47,6 +50,7 @@ public:
     ~MainWindow();
     void CalculateFeatures(Mat drawing);
 
+    void setEnabledAfterCSButtonClicked(bool state);
 public slots:
     void OpenPicture();
     void ToGrayScale();
@@ -77,6 +81,10 @@ private slots:
 
     void on_tryAgainClassifButton_clicked();
 
+    void on_denyButton_clicked();
+
+    void on_denyBinarizationButton_clicked();
+
 private:
 
 
@@ -100,6 +108,7 @@ private:
 
     void setEnabledButtonsAfterChoosingFeatures(bool state);
     void setEnabledAfterFilterButtonClicked(bool state);
+    void setEnabledAfterGrayScaleButtonClicked(bool state);
 };
 
 #endif // MAINWINDOW_H

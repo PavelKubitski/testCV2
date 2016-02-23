@@ -83,26 +83,7 @@ void TrainingDataDialog::colorOfСircuit(QPoint &pos)
                 allocObjMat.at<Vec3b>(imgY, imgX)[1] == seedVect[i].GetColor().val[1] &&
                 allocObjMat.at<Vec3b>(imgY, imgX)[2] == seedVect[i].GetColor().val[2])
         {
-//            if(countOfObjs % countOfObjsInGrBox == 0)
-//            {
-//                trainObjForCluster = QVector<int>();
 
-//                trainDataObjsVectrs.push_back(trainObjForCluster);
-//                if(isEnoughObjForCluster(trainDataObjsVectrs.length()+1))
-//                {
-//                    trainDataObjsVectrs.push_back(trainObjForCluster);
-//                }
-//                countOfThirds++;
-//            }
-//            trainObjForCluster.push_back(i);
-//            fillLabels(i);
-//            contourDetection(seedVect[i].GetColor());
-
-
-//            trainDataObjsVectrs[countOfThirds].push_back(i);
-//            countOfObjs++;
-//            showOnSrcLabel(this->srcImg);
-//            break;
             if(isEnoughObjForCluster(currentCluster))
             {
                 currentCluster++;

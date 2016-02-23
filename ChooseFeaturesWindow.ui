@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Features</string>
   </property>
   <widget class="QPushButton" name="okButton">
    <property name="geometry">
@@ -193,7 +193,7 @@
      <string>Elongation</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
   </widget>
@@ -238,7 +238,7 @@
      <string>MatExpect</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
    </widget>
    <widget class="QCheckBox" name="lumaCheckBox">
@@ -254,7 +254,7 @@
      <string>Luma</string>
     </property>
     <property name="checked">
-     <bool>true</bool>
+     <bool>false</bool>
     </property>
     <property name="tristate">
      <bool>false</bool>

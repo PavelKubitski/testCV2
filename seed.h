@@ -26,6 +26,7 @@ public:
     float dispersion;
     Point centerMass;
     double elongation;
+    float probability;
 
 
 //    void SetLevel(int level);
@@ -57,6 +58,7 @@ private:
     int countOfFeatures;
     int luma;
     int countOfPixels;
+
 
 
 };

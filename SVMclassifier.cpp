@@ -46,14 +46,14 @@ void SVMclassifier::FillTrainingMat()
     Mat labelsMat(countOfOb, 1, CV_32FC1, labels);
 
     Mat trainingDataMat(countOfOb, featVect.length(), CV_32FC1, trainingData);
-    for(int i = 0; i < countOfOb; i++)
-    {
-        for(int j = 0; j < featVect.length(); j++)
-        {
-            std::cout << trainingData[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
+//    for(int i = 0; i < countOfOb; i++)
+//    {
+//        for(int j = 0; j < featVect.length(); j++)
+//        {
+//            std::cout << trainingData[i][j] << " ";
+//        }
+//        std::cout << "\n";
+//    }
     // Set up SVM's parameters
     CvSVMParams params;
     params.svm_type    = CvSVM::C_SVC;
@@ -66,14 +66,22 @@ void SVMclassifier::FillTrainingMat()
 
     int featureLength = featVect.length();
     float object[featureLength];
-
+    float confidence;
     for(int i = 0; i < seedVect.length(); i++)
     {
         fillObject(object, i);
         Mat objectMat(1, featureLength, CV_32FC1, object);
+        float cl2 = SVM.predict(objectMat, true);
+        confidence = 1.0 / (1.0 + exp(-cl2));
         float cl = SVM.predict(objectMat);
         seedVect[i].SetCluster(cl);
+        seedVect[i].probability = confidence;
     }
+//    for(int i =0; i<seedVect.length(); i++)
+//        cout << "area = " <<seedVect[i].GetArea() <<" luma = " <<seedVect[i].GetLuma() << " matexp = " << seedVect[i].matExpect
+//             <<" centre = " <<seedVect[i].centerMass << " ellong = " << seedVect[i].elongation << " cluster = " <<seedVect[i].GetCluster() <<"\n ";
+    for(int i =0; i<seedVect.length(); i++)
+        cout << seedVect[i].GetCluster() << ", ";
 }
 
 

@@ -6,7 +6,7 @@
 
 QT       += core gui
 
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
 TARGET = testCV2
 TEMPLATE = app
@@ -26,7 +26,9 @@ SOURCES += main.cpp\
     FeaturesCaculation.cpp \
     ChooseFeaturesWindow.cpp \
     TrainingDataDialog.cpp \
-    MatDisplay.cpp
+    MatDisplay.cpp \
+    ROCDialog.cpp \
+    qcustomplot.cpp
 
 HEADERS  += mainwindow.h \
     custspinbox.h \
@@ -39,12 +41,15 @@ HEADERS  += mainwindow.h \
     FeaturesCaculation.h \
     ChooseFeaturesWindow.h \
     TrainingDataDialog.h \
-    MatDisplay.h
+    MatDisplay.h \
+    ROCDialog.h \
+    qcustomplot.h
 
 FORMS    += mainwindow.ui \
     ImageLabelForm.ui \
     ChooseFeaturesWindow.ui \
-    TrainingDataDialog.ui
+    TrainingDataDialog.ui \
+    ROCDialog.ui
 
 INCLUDEPATH += /usr/local/include
 
@@ -55,6 +60,9 @@ LIBS += -lopencv_highgui \
         -lopencv_video \
         -lopencv_imgproc \
         -lopencv_ml \
+
+DISTFILES += \
+    ../../../../Users/pavelkubitski/Desktop/Roc2/cppROC/roc.txt
 
 
 

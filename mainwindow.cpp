@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
 //    contrastUsed = false;
     binarizated = false;
     ui->srcImageLabel->setStyleSheet("QLabel { background-color : white;}");
+    this->imgBinaryStack = QStack<Mat>();
 
 //connecting to trainingDatawindow in ClassificationSVM
 
@@ -49,12 +50,12 @@ void MainWindow::OpenPicture()
 {
     QString nameOfOpenFile;
     String nameOfFile;
-//    nameOfOpenFile = QFileDialog::getOpenFileName(this,
-//                                        tr("Open File"), QDir::currentPath(),tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
+    nameOfOpenFile = QFileDialog::getOpenFileName(this,
+                                        tr("Open File"), QDir::currentPath(),tr("Image Files (*.png *.jpg *.jpeg *.bmp)"));
 
-    nameOfOpenFile = "bob, rice, corn.png";
+//    nameOfOpenFile = "bob, rice, corn.png";
 //    nameOfOpenFile = "sds.png";
-
+    this->fileName = QString(nameOfOpenFile);
 
     if(!nameOfOpenFile.isEmpty())
     {
@@ -86,11 +87,13 @@ void MainWindow::OpenPicture()
 
 void MainWindow::ToGrayScale()
 {
+
     if(lastColorSystem != NONE)
     {
         matsrc = CSvector[ui->tabWidget->currentIndex()].clone();
 //        imshow("gray", matsrc);
         showOnGrayLabel(matsrc, "Grayscale");
+        setEnabledAfterGrayScaleButtonClicked(false);
     }
     else
     {
@@ -98,6 +101,7 @@ void MainWindow::ToGrayScale()
         Mat gray = Mat::zeros(matsrc.size(), matsrc.type());
         if(!matsrc.empty())
         {
+            setEnabledAfterGrayScaleButtonClicked(false);
             cvtColor(matsrc, gray, CV_BGR2GRAY);
             matsrc = gray.clone();
             showOnGrayLabel(matsrc, "Grayscale");
@@ -109,6 +113,18 @@ void MainWindow::ToGrayScale()
         }
         gray.release();
     }
+}
+
+void MainWindow::setEnabledAfterGrayScaleButtonClicked(bool state)
+{
+    ui->customContrSpinBox->setEnabled(state);
+    ui->customSpinBox->setEnabled(state);
+    ui->CMYKButton->setEnabled(state);
+    ui->HSVButton->setEnabled(state);
+    ui->HLSButton->setEnabled(state);
+    ui->LABButton->setEnabled(state);
+    ui->denyButton->setEnabled(state);
+
 }
 
 void MainWindow::ClearForm()
@@ -144,7 +160,7 @@ void MainWindow::ClearForm()
     ui->grayScaleCheckBox->setEnabled(true);
     ui->otsuButton->setEnabled(true);
     ui->clusterTableWidget->clear();
-
+    ui->denyButton->setEnabled(true);
 }
 
 void MainWindow::BrightnessAdjust ( Mat &srcImg, Mat &dstImg, float brightness)
@@ -205,6 +221,8 @@ void MainWindow::ChangeBrightness()
         {
             matsrc = imgStack.pop();
         }
+        if(lastColorSystem != NONE)
+            on_grayScaleCheckBox_clicked();
         ui->customSpinBox->SetOldValue(ui->customSpinBox->value());
         showOnSrcLabel(matsrc);
         dst.release();
@@ -230,6 +248,7 @@ void MainWindow::ChangeContrast()
         {
             imgStack.push(matsrc);
             ContrastAdjust(matsrc, dst, contrast);
+
             matsrc = dst.clone();           
 //            contrastUsed = true;
 //            brightnessUsed = false;
@@ -238,6 +257,8 @@ void MainWindow::ChangeContrast()
         {
                 matsrc = imgStack.pop();
         }
+        if(lastColorSystem != NONE)
+            on_grayScaleCheckBox_clicked();
         ui->customContrSpinBox->SetOldValue(ui->customContrSpinBox->value());
         //matsrc = dst.clone();
         showOnSrcLabel(matsrc);
@@ -281,12 +302,14 @@ void MainWindow::AdaptiveThreshold()
     {
         if(matsrc.channels() == 1)
         {
+            imgBinaryStack.push(matsrc);
             ui->toGrayScaleButton->setEnabled(false);
             int blockSize = ui->blockSizeSpinBox->value();
             int constantC = ui->cSpinBox->value();
             Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
             adaptiveThreshold(matsrc, dst, 255,CV_ADAPTIVE_THRESH_MEAN_C, CV_THRESH_BINARY_INV, blockSize, constantC);
             duplicateMatSrc = dst.clone();
+//            imgBinaryStack.push(duplicateMatSrc);
             showOnGrayLabel(duplicateMatSrc, "Binarization");
             binarizated = true;
             dst.release();
@@ -311,6 +334,9 @@ void MainWindow::AdaptiveThresholdOtsu()
     {
         if(matsrc.channels() == 1)
         {
+            Mat ImgSource = matsrc.clone();
+            imgBinaryStack.push(ImgSource);
+//            imshow("imgbin", matsrc);
             ui->toGrayScaleButton->setEnabled(false);
             Mat dst = Mat::zeros(matsrc.size(), matsrc.type());
             GaussianBlur(matsrc, dst, Size(5,5),0);
@@ -318,7 +344,7 @@ void MainWindow::AdaptiveThresholdOtsu()
             threshold(dst, matsrc, 0, 255, CV_THRESH_OTSU);
             bitwise_not (matsrc, matsrc);
             duplicateMatSrc = matsrc.clone();
-
+//            imgBinaryStack.push(duplicateMatSrc);
             showOnGrayLabel(duplicateMatSrc, "Otsu binarization");
 
             binarizated = true;
@@ -472,6 +498,14 @@ void MainWindow::ErodeFilter()
         QMessageBox::information(this, tr("Erode filter"), tr("Image is not downloaded"));
     }
 }
+
+
+void MainWindow::setEnabledAfterCSButtonClicked(bool state)
+{
+//    ui->customContrSpinBox->setEnabled(state);
+//    ui->customSpinBox->setEnabled(state);
+}
+
 
 void MainWindow::setEnabledAfterFilterButtonClicked(bool state)
 {
@@ -836,7 +870,7 @@ void MainWindow::ChangeColorSystemRGBtoAnother(ColorSystem cs, QString systemNam
     CSvector.clear();
     CSvectorColored.clear();
     lastColorSystem = cs;
-
+    setEnabledAfterCSButtonClicked(false);
     switch (cs) {
     case CMYK:
         CSvectorColored = ColorSystemConverter::rgb2cmyk(this->matsrc, CSvector);
@@ -905,7 +939,10 @@ void MainWindow::StartClassification()
         SVMclassifier svm(seedVect, feat, ui->clusterSpinBox->value(), trainingData);
         svm.FillTrainingMat();
         seedVect = svm.GetSeedVector();
-
+        ROCDialog *rocWindow = new ROCDialog(fileName, seedVect);
+        rocWindow->calculateROCparemeters();
+//        rocWindow->drawRocCurve(0);
+//        rocWindow->show();
         showClusters(matsrc);
         ShowClassificationStatistics();
 
@@ -930,10 +967,11 @@ void MainWindow::StartClassification()
 
 void MainWindow::on_featuresButton_clicked()
 {
-//    imshow("matsrc", matsrc);
+
     seedVectorOldVertion = QVector<Seed>(seedVect);
     duplicateMatSrc = matsrc.clone();
-//    imshow("duplicateMatSrc", duplicateMatSrc);
+
+
     featuresWindow = new ChooseFeaturesWindow();
     setEnabledButtonsAfterChoosingFeatures(false);
     featuresWindow->show();
@@ -942,8 +980,29 @@ void MainWindow::on_featuresButton_clicked()
 void MainWindow::on_tryAgainClassifButton_clicked()
 {
     matsrc = duplicateMatSrc.clone();
-//    imshow("matsrc2", matsrc);
-//    imshow("duplicateMatSrc2", duplicateMatSrc);
+
+    ui->clusterTableWidget->clear();
     seedVect = QVector<Seed>(seedVectorOldVertion);
     showOnSrcLabel(matsrc);
+}
+
+void MainWindow::on_denyButton_clicked()
+{
+    matsrc = firstImage.clone();
+    lastColorSystem = NONE;
+    Mat mat = Mat::zeros(matsrc.rows, matsrc.cols,matsrc.type());
+
+
+    mat.setTo(cv::Scalar(255,255,255));
+    showOnGrayLabel(mat, "");
+}
+
+void MainWindow::on_denyBinarizationButton_clicked()
+{
+    if(!imgBinaryStack.empty())
+    {
+        matsrc = imgBinaryStack.pop();
+//        imshow("matsrc",matsrc);
+        showOnGrayLabel(matsrc, "");
+    }
 }
